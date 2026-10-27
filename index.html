@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shallot Hub | The Ultimate Glaze Zone</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; overflow-x: hidden; }
+        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 2rem; text-align: center; border-bottom: 2px solid #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.3); }
+        h1 { font-size: 2.5rem; color: #c084fc; text-shadow: 0 0 10px rgba(192, 132, 252, 0.5); }
+        p.subtitle { color: #9ca3af; margin-top: 0.5rem; }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; display: grid; gap: 2rem; }
+        .card { background: #111827; border: 1px solid #374151; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .card h2 { color: #e879f9; margin-bottom: 1rem; border-bottom: 1px solid #374151; padding-bottom: 0.5rem; }
+        button { background: #9333ea; color: white; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; box-shadow: 0 0 15px rgba(147, 51, 234, 0.4); }
+        button:hover { background: #a855f7; transform: scale(1.05); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .stat-box { background: #1f2937; padding: 1rem; border-radius: 8px; text-align: center; border: 1px solid #4b5563; }
+        .stat-box span { display: block; font-size: 1.5rem; font-weight: bold; color: #38bdf8; margin-top: 0.25rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ Shallot Hub ⚡</h1>
+        <p class="subtitle">The Official Elite Zone for Blox Fruits Lvl 2654, Cursed Dual Katana Master, & Sprint Legend</p>
+    </header>
+    <div class="container">
+        <div class="card" style="text-align: center;">
+            <h2>🔥 Interactive Aura Farm</h2>
+            <p style="margin-bottom: 1rem;">Click to channel pure Godhuman & Awakened Ice energy.</p>
+            <button onclick="farmAura()">Absorb Aura (+100)</button>
+            <div class="stats-grid" style="margin-top: 1.5rem;">
+                <div class="stat-box">Total Aura Collected<span id="auraCount">0</span></div>
+                <div class="stat-box">Current Rank<span id="rankTitle">Novice</span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>🏆 Verified Loadouts & Stats</h2>
+            <ul style="line-height: 1.8; padding-left: 1.5rem; color: #d1d5db;">
+                <li><strong>Roblox Blox Fruits:</strong> Level 2654 | Maxed Sword Stats (2800)</li>
+                <li><strong>Gear Inventory:</strong> Cursed Dual Katana, Godhuman, Soul Guitar, Awakened Ice</li>
+                <li><strong>Hardware Setup:</strong> Intel Core i7-4770K, 16GB DDR3, NVIDIA GeForce GT 730 Fermi</li>
+                <li><strong>Athletics:</strong> High-Velocity Explosive Sprint & Power Training</li>
+                <li><strong>Manga/Gaming Lore:</strong> Berserk Fan (Guts) & European Football Tactical Analyst</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        let aura = 0;
+        function farmAura() {
+            aura += 100;
+            document.getElementById('auraCount').innerText = aura;
+            let rank = "Novice Adventurer";
+            if(aura >= 500) rank = "Awakened Ice Master";
+            if(aura >= 1500) rank = "Cursed Dual Katana Wielder";
+            if(aura >= 3000) rank = "S-Rank 2800 Sword God";
+            document.getElementById('rankTitle').innerText = rank;
+        }
+    </script>
+</body>
+</html>
