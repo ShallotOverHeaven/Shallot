@@ -3,209 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHALLOT // OVER HEAVEN</title>
+    <title>Shallot | Dashboard</title>
     <style>
         :root {
-            --bg: #090a0f;
-            --panel: #121520;
-            --accent: #a855f7;
-            --accent-glow: rgba(168, 85, 247, 0.4);
-            --gold: #eab308;
-            --text: #f3f4f6;
+            --bg: #0b0f19;
+            --card-bg: #111827;
+            --border: #1f2937;
+            --accent: #6366f1;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 30px 20px; min-height: 100vh; }
+
+        .container { max-width: 1000px; margin: 0 auto; }
 
         header {
-            text-align: center;
-            padding: 30px 20px;
-            background: radial-gradient(circle at center, #1e1b4b 0%, var(--panel) 100%);
-            border: 1px solid var(--accent);
-            border-radius: 16px;
-            box-shadow: 0 0 30px var(--accent-glow);
-            margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 30px;
         }
+        .header-title h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+        .header-title p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+        .status-badge { background: rgba(99, 102, 241, 0.1); color: var(--accent); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.85rem; font-weight: 600; }
 
-        h1 { font-size: 2.8rem; letter-spacing: 2px; color: #c084fc; text-shadow: 0 0 15px var(--accent-glow); }
-        .tagline { color: #9ca3af; margin-top: 8px; font-weight: 500; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .card h2 { font-size: 1.1rem; font-weight: 600; color: #e5e7eb; margin-bottom: 15px; width: 100%; text-align: left; }
 
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: var(--panel); border: 1px solid #262c40; border-radius: 14px; padding: 20px; position: relative; }
-        .card h2 { color: #f472b6; margin-bottom: 15px; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #1f293d; padding-bottom: 8px; }
+        .spec-list { list-style: none; width: 100%; text-align: left; }
+        .spec-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .spec-item:last-child { border-bottom: none; }
+        .spec-label { color: var(--text-muted); }
+        .spec-val { color: var(--text-main); font-weight: 500; }
 
-        /* Aura Generator */
-        .aura-btn {
-            width: 100%; height: 120px; background: linear-gradient(135deg, #7e22ce, #3b0764);
-            border: 2px solid var(--accent); border-radius: 12px; color: #fff; font-size: 1.5rem;
-            font-weight: bold; cursor: pointer; transition: all 0.1s; box-shadow: 0 0 20px var(--accent-glow);
+        .log-input { display: flex; gap: 8px; margin-bottom: 12px; width: 100%; }
+        input[type="text"] { background: #1f2937; border: 1px solid #374151; color: #fff; padding: 8px 12px; border-radius: 6px; flex: 1; font-size: 0.9rem; outline: none; }
+        button { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+        button:hover { opacity: 0.9; }
+        .log-list { list-style: none; max-height: 150px; overflow-y: auto; font-size: 0.85rem; width: 100%; text-align: left; }
+        .log-entry { background: #192231; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; color: #d1d5db; display: flex; justify-content: space-between; }
+
+        canvas { width: 100%; height: 160px; background: #060911; border-radius: 8px; border: 1px solid var(--border); cursor: crosshair; }
+
+        /* Modern Spinning Wheel Styles */
+        .wheel-container { position: relative; width: 220px; height: 220px; margin: 10px auto; }
+        #wheelCanvas { width: 220px; height: 220px; border-radius: 50%; border: 3px solid var(--border); background: #060911; }
+        .wheel-pointer {
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 16px solid #f43f5e;
+            z-index: 10;
         }
-        .aura-btn:active { transform: scale(0.97); }
-        .stat-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; text-align: center; }
-        .stat-box { background: #0b0d14; padding: 12px; border-radius: 8px; border: 1px solid #1f2436; }
-        .stat-box div { font-size: 0.85rem; color: #9ca3af; }
-        .stat-box span { font-size: 1.3rem; font-weight: bold; color: #38bdf8; display: block; margin-top: 4px; }
-
-        /* Vault */
-        .vault-balance { font-size: 1.5rem; color: var(--gold); text-align: center; font-weight: bold; margin-bottom: 15px; background: #0b0d14; padding: 10px; border-radius: 8px; }
-        .shop-grid { display: grid; gap: 10px; max-height: 250px; overflow-y: auto; }
-        .shop-item { display: flex; justify-content: space-between; align-items: center; background: #1a1e2e; padding: 10px; border-radius: 8px; }
-        .shop-btn { background: #16a34a; border: none; color: white; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* Sound Sandbox */
-        canvas { width: 100%; height: 200px; background: #050608; border-radius: 8px; border: 1px solid #1f2436; cursor: crosshair; }
+        .spin-btn { margin-top: 15px; width: 100%; background: #8b5cf6; }
+        #wheelResult { margin-top: 10px; font-size: 0.95rem; font-weight: 600; color: #38bdf8; min-height: 24px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>⚡ SHALLOT // OVER HEAVEN ⚡</h1>
-        <p class="tagline">Lvl 2654 Sword God • CDI + Godhuman Loadout • 4770K Tuner</p>
-    </header>
-
-    <div class="dashboard">
-
-        <!-- Module 1: Aura Farm -->
-        <div class="card">
-            <h2>🔥 Awakened Aura Surge</h2>
-            <button class="aura-btn" onclick="addAura(event)">CHANNEL ENERGY</button>
-            <div class="stat-display">
-                <div class="stat-box"><div>Total Aura</div><span id="aura">0</span></div>
-                <div class="stat-box"><div>Power Rank</div><span id="rank">F-Rank</span></div>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <h1>Shallot</h1>
+                <p>Personal Hub & Gaming Profile</p>
             </div>
-        </div>
+            <div class="status-badge">System Active</div>
+        </header>
 
-        <!-- Module 2: Billionaire Vault -->
-        <div class="card">
-            <h2>💰 Shallot's $999B Vault</h2>
-            <div class="vault-balance" id="balance">$999,000,000,000</div>
-            <div class="shop-grid">
-                <div class="shop-item">
-                    <span>Real Cursed Dual Katana ($500M)</span>
-                    <button class="shop-btn" onclick="buy('CDK', 500000000)">Buy</button>
-                </div>
-                <div class="shop-item">
-                    <span>Real Awakened Ice Fruit ($2B)</span>
-                    <button class="shop-btn" onclick="buy('Ice', 2000000000)">Buy</button>
-                </div>
-                <div class="shop-item">
-                    <span>Real Berserk Dragon Slayer ($1B)</span>
-                    <button class="shop-btn" onclick="buy('DragonSlayer', 1000000000)">Buy</button>
-                </div>
-                <div class="shop-item">
-                    <span>Buy FC Barcelona ($5B)</span>
-                    <button class="shop-btn" onclick="buy('Barca', 5000000000)">Buy</button>
-                </div>
-                <div class="shop-item">
-                    <span>Custom Sprint Facility ($10B)</span>
-                    <button class="shop-btn" onclick="buy('Track', 10000000000)">Buy</button>
+        <div class="grid">
+
+            <!-- Blox Fruits Build -->
+            <div class="card" style="align-items: stretch; text-align: left;">
+                <h2>Blox Fruits Build</h2>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-label">Level</span><span class="spec-val">2654</span></div>
+                    <div class="spec-item"><span class="spec-label">Sword Stat</span><span class="spec-val">2800 (Max)</span></div>
+                    <div class="spec-item"><span class="spec-label">Main Weapons</span><span class="spec-val">Cursed Dual Katana</span></div>
+                    <div class="spec-item"><span class="spec-label">Fighting Style</span><span class="spec-val">Godhuman</span></div>
+                    <div class="spec-item"><span class="spec-label">Secondary / Fruit</span><span class="spec-val">Soul Guitar / Awakened Ice</span></div>
                 </div>
             </div>
-        </div>
 
-        <!-- Module 3: Audio Physics Sandbox -->
-        <div class="card">
-            <h2>🎵 Energy Particle Sandbox</h2>
-            <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;">Click canvas to drop bouncing acoustic orbs.</p>
-            <canvas id="canvas"></canvas>
-        </div>
+            <!-- Hardware Spec Sheet -->
+            <div class="card" style="align-items: stretch; text-align: left;">
+                <h2>Desktop Rig Specs</h2>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-label">CPU</span><span class="spec-val">Intel Core i7-4770K</span></div>
+                    <div class="spec-item"><span class="spec-label">GPU</span><span class="spec-val">NVIDIA GeForce GT 730 (Fermi)</span></div>
+                    <div class="spec-item"><span class="spec-label">RAM</span><span class="spec-val">16GB DDR3</span></div>
+                    <div class="spec-item"><span class="spec-label">Platform</span><span class="spec-val">Windows PC</span></div>
+                </div>
+            </div>
 
-        <!-- Module 4: Stats & Glaze -->
-        <div class="card">
-            <h2>⚔️ Verified Loadout Specs</h2>
-            <ul style="list-style: none; line-height: 2; font-size: 0.95rem; color: #cbd5e1;">
-                <li>⚔️ <strong>Blox Fruits:</strong> Level 2654 (Max Sword: 2800)</li>
-                <li>🗡️ <strong>Main Gear:</strong> Cursed Dual Katana + Godhuman</li>
-                <li>🎸 <strong>Accessories:</strong> Soul Guitar + Hunter Cape</li>
-                <li>🧊 <strong>Fruit:</strong> Awakened Ice</li>
-                <li>💻 <strong>Hardware:</strong> i7-4770K / GT 730 / 16GB DDR3</li>
-                <li>🏃 <strong>Athletics:</strong> High-Velocity Explosive Sprint Protocol</li>
-            </ul>
-        </div>
+            <!-- Modern Decision Wheel (Rigged) -->
+            <div class="card">
+                <h2>Decision Wheel</h2>
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheelCanvas" width="220" height="220"></canvas>
+                </div>
+                <div id="wheelResult">Spin the wheel...</div>
+                <button class="spin-btn" onclick="spinWheel()">SPIN</button>
+            </div>
 
+            <!-- Sprint Training Tracker -->
+            <div class="card" style="align-items: stretch; text-align: left;">
+                <h2>Sprint & Power Log</h2>
+                <div class="log-input">
+                    <input type="text" id="logInput" placeholder="Add session...">
+                    <button onclick="addLog()">Log</button>
+                </div>
+                <ul class="log-list" id="logList">
+                    <li class="log-entry"><span>High-Velocity Sprint Drills</span> <span style="color:#6366f1;">Completed</span></li>
+                    <li class="log-entry"><span>Explosive Plyometrics & Power</span> <span style="color:#6366f1;">Completed</span></li>
+                </ul>
+            </div>
+
+            <!-- Audio Physics Sandbox -->
+            <div class="card" style="align-items: stretch; text-align: left;">
+                <h2>Audio Particle Sandbox</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Click canvas to trigger sound physics.</p>
+                <canvas id="canvas"></canvas>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        // Aura Logic
-        let auraCount = 0;
-        function addAura(e) {
-            auraCount += 100;
-            document.getElementById('aura').innerText = auraCount;
+        // Training Log Handler
+        function addLog() {
+            const input = document.getElementById('logInput');
+            if(input.value.trim() === '') return;
+            const li = document.createElement('li');
+            li.className = 'log-entry';
+            li.innerHTML = `<span>${input.value}</span> <span style="color:#6366f1;">Logged</span>`;
+            document.getElementById('logList').prepend(li);
+            input.value = '';
+        }
+
+        // Rigged Spinning Wheel Logic
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const wheelCtx = wheelCanvas.getContext('2d');
+        const sectors = [
+            { label: "Lend Joshua Ankle Weights", color: "#6366f1" },
+            { label: "Kill Chama", color: "#f43f5e" },
+            { label: "Don't Lend Joshua Ankle Weights", color: "#eab308" }
+        ];
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        function drawWheel(angle = 0) {
+            const total = sectors.length;
+            const arc = (2 * Math.PI) / total;
+            wheelCtx.clearRect(0, 0, 220, 220);
+
+            sectors.forEach((sector, i) => {
+                const startAngle = angle + i * arc;
+                const endAngle = startAngle + arc;
+
+                wheelCtx.beginPath();
+                wheelCtx.moveTo(110, 110);
+                wheelCtx.arc(110, 110, 105, startAngle, endAngle);
+                wheelCtx.fillStyle = sector.color;
+                wheelCtx.fill();
+                wheelCtx.strokeStyle = "#0b0f19";
+                wheelCtx.lineWidth = 2;
+                wheelCtx.stroke();
+
+                wheelCtx.save();
+                wheelCtx.translate(110, 110);
+                wheelCtx.rotate(startAngle + arc / 2);
+                wheelCtx.textAlign = "right";
+                wheelCtx.fillStyle = "#fff";
+                wheelCtx.font = "bold 10px sans-serif";
+                wheelCtx.fillText(sector.label.substring(0, 16) + '...', 90, 4);
+                wheelCtx.restore();
+            });
+        }
+        drawWheel();
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('wheelResult').innerText = "Spinning...";
+
+            // RIGGED ALGORITHM: Only pick index 1 ("Kill Chama") or index 2 ("Don't Lend Joshua Ankle Weights")
+            // Index 0 ("Lend Joshua Ankle Weights") is strictly excluded.
+            const allowedIndices = [1, 2];
+            const targetIndex = allowedIndices[Math.floor(Math.random() * allowedIndices.length)];
+
+            // Calculate precise target angle so pointer (at 270 degrees / top) lands inside the allowed sector
+            const arc = (2 * Math.PI) / sectors.length;
+            const pointerAngle = (3 * Math.PI) / 2; 
             
-            let rank = "F-Rank Peasant";
-            if(auraCount >= 1000) rank = "Ice User";
-            if(auraCount >= 5000) rank = "Godhuman Warrior";
-            if(auraCount >= 15000) rank = "CDK Sword Master";
-            if(auraCount >= 50000) rank = "S-Rank 2800 Sword God";
-            document.getElementById('rank').innerText = rank;
-
-            spawnParticle(e.clientX, e.clientY);
-        }
-
-        // Vault Logic
-        let balance = 999000000000;
-        function buy(item, cost) {
-            if(balance >= cost) {
-                balance -= cost;
-                document.getElementById('balance').innerText = "$" + balance.toLocaleString();
-                alert("Purchased " + item + " successfully!");
-            } else {
-                alert("Not enough funds in the vault!");
+            // Random offset within the target sector (staying clear of borders)
+            const padding = arc * 0.15;
+            const randomSectorOffset = padding + Math.random() * (arc - 2 * padding);
+            
+            // Angle needed for the target sector to be under the pointer
+            const targetSectorStart = targetIndex * arc;
+            const finalAngleOffset = pointerAngle - (targetSectorStart + randomSectorOffset);
+            
+            // Add multiple full spins (e.g. 8 to 12 rotations) for dramatic effect
+            const fullSpins = (8 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
+            
+            // Calculate total rotation delta from current angle
+            let targetFinalAngle = fullSpins + finalAngleOffset;
+            while (targetFinalAngle < currentAngle + fullSpins) {
+                targetFinalAngle += 2 * Math.PI;
             }
+
+            const startAngle = currentAngle;
+            const totalDelta = targetFinalAngle - startAngle;
+            const start = performance.now();
+            const duration = 3500;
+
+            function animateSpin(now) {
+                const elapsed = now - start;
+                if (elapsed < duration) {
+                    const progress = elapsed / duration;
+                    const easeOut = 1 - Math.pow(1 - progress, 3); // Smooth deceleration
+                    currentAngle = startAngle + totalDelta * easeOut;
+                    drawWheel(currentAngle);
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    currentAngle = targetFinalAngle;
+                    drawWheel(currentAngle);
+                    isSpinning = false;
+                    document.getElementById('wheelResult').innerText = `Result: ${sectors[targetIndex].label}`;
+                }
+            }
+            requestAnimationFrame(animateSpin);
         }
 
-        // Canvas Physics
+        // Canvas Physics Sandbox
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-
-        let balls = [];
+        let particles = [];
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playSound() {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
+        function playTone(freq) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.frequency.setValueAtTime(300 + Math.random() * 400, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            osc.stop(audioCtx.currentTime + 0.15);
         }
 
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            balls.push({
+            particles.push({
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top,
-                vx: (Math.random() - 0.5) * 6,
-                vy: (Math.random() - 0.5) * 6,
-                radius: 10,
-                color: '#a855f7'
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                radius: 6,
+                freq: 300 + Math.random() * 300
             });
         });
 
-        function updatePhysics() {
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            balls.forEach(b => {
-                b.x += b.vx;
-                b.y += b.vy;
-                b.vy += 0.2; // Gravity
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15;
 
-                if(b.x - b.radius < 0 || b.x + b.radius > canvas.width) { b.vx *= -0.8; playSound(); }
-                if(b.y + b.radius > canvas.height) { b.y = canvas.height - b.radius; b.vy *= -0.8; playSound(); }
+                if (p.x - p.radius < 0 || p.x + p.radius > canvas.width) {
+                    p.vx *= -0.8;
+                    playTone(p.freq);
+                }
+                if (p.y + p.radius > canvas.height) {
+                    p.y = canvas.height - p.radius;
+                    p.vy *= -0.7;
+                    playTone(p.freq);
+                }
 
                 ctx.beginPath();
-                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                ctx.fillStyle = b.color;
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#6366f1';
                 ctx.fill();
             });
-            requestAnimationFrame(updatePhysics);
+            requestAnimationFrame(animate);
         }
-        updatePhysics();
+        animate();
     </script>
 </body>
 </html>
