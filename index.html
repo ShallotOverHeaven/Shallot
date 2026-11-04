@@ -3,311 +3,983 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Oracle | Premium Decision Engine</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Cyber-Surprise Hub | Retro Arcade Experience</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#080811',
+                            panel: 'rgba(18, 18, 36, 0.75)',
+                            border: '#00f0ff',
+                            pink: '#ff007f',
+                            cyan: '#00f0ff',
+                            purple: '#9d00ff',
+                            yellow: '#ffe600',
+                            green: '#00ff66'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'scanline': 'scanline 8s linear infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glitch': 'glitch 1s infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 10px rgba(0,240,255,0.4), inset 0 0 10px rgba(0,240,255,0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(255,0,127,0.8), inset 0 0 15px rgba(255,0,127,0.4)' }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(1000%)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --bg-base: #030408;
-            --gold-light: #fef08a;
-            --gold-primary: #eab308;
-            --gold-dark: #854d0e;
-            --crimson: #f43f5e;
-            --indigo: #6366f1;
-            --glass-border: rgba(234, 179, 8, 0.25);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: var(--bg-base);
-            color: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background-color: #080811;
+            color: #e0e6ed;
+            font-family: 'Rajdhani', sans-serif;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 20%, rgba(234, 179, 8, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 60%);
+            margin: 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
 
-        header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .brand-subtitle {
-            font-family: 'Cinzel', serif;
-            letter-spacing: 4px;
-            font-size: 0.75rem;
-            color: var(--gold-primary);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            opacity: 0.9;
-        }
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--gold-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-            text-shadow: 0 0 30px rgba(234, 179, 8, 0.2);
-        }
-
-        .wheel-wrapper {
-            position: relative;
-            width: 380px;
-            height: 380px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .outer-ring {
-            position: absolute;
-            inset: -12px;
-            border-radius: 50%;
-            background: radial-gradient(circle, transparent 60%, rgba(234, 179, 8, 0.15) 100%),
-                        linear-gradient(135deg, var(--gold-primary), transparent, var(--gold-dark));
-            padding: 2px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(234, 179, 8, 0.2);
-        }
-
-        .inner-ring-bg {
-            width: 100%;
-            height: 100%;
-            background: var(--bg-base);
-            border-radius: 50%;
-        }
-
-        /* Fixed pointer strictly aligned to top center (0 degrees in standard polar coords relative to top) */
-        .pointer-container {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7));
-            transition: transform 0.05s ease;
-        }
-
-        .pointer-container.tick {
-            transform: translateX(-50%) scale(1.15) translateY(-2px);
-        }
-
-        .pointer {
-            width: 0;
-            height: 0;
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-top: 28px solid var(--gold-primary);
-        }
-
-        #wheelCanvas {
-            width: 380px;
-            height: 380px;
-            border-radius: 50%;
-            position: relative;
-            z-index: 5;
-        }
-
-        .center-cap {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle at 35% 35%, #2a2d3d, #090b10);
-            border: 3px solid var(--gold-primary);
-            border-radius: 50%;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(234, 179, 8, 0.5);
-        }
-
-        .center-cap::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background: var(--gold-primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--gold-primary);
-        }
-
-        .control-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            margin-top: 25px;
-        }
-
-        .spin-btn {
-            background: linear-gradient(135deg, #d97706 0%, var(--gold-primary) 50%, #b45309 100%);
-            border: 1px solid var(--gold-light);
-            color: #000;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            padding: 16px 48px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.3), inset 0 1px 0 rgba(255,255,255,0.4);
-            text-transform: uppercase;
-        }
-
-        .spin-btn:hover:not(:disabled) {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 35px rgba(234, 179, 8, 0.5), inset 0 1px 0 rgba(255,255,255,0.6);
-        }
-
-        .spin-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .result-box {
-            margin-top: 30px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .result-text {
-            font-family: 'Cinzel', serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gold-light);
-            text-align: center;
-            letter-spacing: 1px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
-        }
-
-        .result-text.show {
-            opacity: 1;
-            transform: translateY(0);
-            text-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
-        }
-
-        #confettiCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+        /* CRT Grid overlay */
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 6px 100%;
             pointer-events: none;
-            z-index: 100;
+        }
+
+        /* Neon Text Glow Effects */
+        .text-glow-cyan {
+            text-shadow: 0 0 5px #00f0ff, 0 0 15px #00f0ff, 0 0 30px #00f0ff;
+        }
+        .text-glow-pink {
+            text-shadow: 0 0 5px #ff007f, 0 0 15px #ff007f, 0 0 30px #ff007f;
+        }
+        .text-glow-yellow {
+            text-shadow: 0 0 5px #ffe600, 0 0 15px #ffe600;
+        }
+
+        /* Neon Glass Box styling */
+        .cyber-card {
+            background: rgba(16, 18, 38, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cyber-card:hover {
+            border-color: rgba(255, 0, 127, 0.8);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.3), inset 0 0 20px rgba(255, 0, 127, 0.1);
+        }
+
+        /* Custom Cyber Buttons */
+        .cyber-btn {
+            position: relative;
+            background: linear-gradient(45deg, #ff007f, #9d00ff);
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
+        }
+
+        .cyber-btn:active {
+            transform: translateY(1px);
+        }
+
+        .cyber-btn-cyan {
+            background: linear-gradient(45deg, #00f0ff, #00ff66);
+            color: #080811;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080811;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00f0ff;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff007f;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen relative flex flex-col justify-between select-none">
 
-    <canvas id="confettiCanvas"></canvas>
+    <!-- Interactive Background Canvas -->
+    <canvas id="bgCanvas" class="fixed inset-0 w-full h-full -z-10"></canvas>
 
-    <div class="container">
-        <header>
-            <div class="brand-subtitle">Autonomous Destiny Protocol</div>
-            <h1>The Decision Engine</h1>
-        </header>
+    <!-- CRT Scanline overlay -->
+    <div class="crt-overlay fixed inset-0 w-full h-full -z-5"></div>
 
-        <div class="wheel-wrapper">
-            <div class="outer-ring"><div class="inner-ring-bg"></div></div>
-            <div class="pointer-container" id="pointer">
-                <div class="pointer"></div>
+    <!-- Header / Navigation Bar -->
+    <header class="w-full border-b border-cyber-cyan/30 bg-cyber-bg/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('hub')">
+                <i class="fa-solid fa-gamepad text-3xl text-cyber-cyan animate-pulse"></i>
+                <div>
+                    <h1 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-cyber-pink to-cyber-yellow leading-none">
+                        CYBER<span class="text-white">-</span>SURPRISE
+                    </h1>
+                    <p class="text-xs text-cyber-cyan/80 tracking-widest font-semibold uppercase">Retro Arcade Hub v2.0</p>
+                </div>
             </div>
-            <canvas id="wheelCanvas" width="760" height="760"></canvas>
-            <div class="center-cap"></div>
+
+            <!-- Status Metrics & Global Score -->
+            <div class="flex items-center space-x-6 text-sm font-orbitron">
+                <div class="hidden sm:flex items-center space-x-2 bg-cyber-bg/90 border border-cyber-cyan/30 px-3 py-1.5 rounded-md shadow-inner">
+                    <i class="fa-solid fa-trophy text-cyber-yellow"></i>
+                    <span class="text-gray-400">TOTAL SCORE:</span>
+                    <span id="globalScore" class="text-cyber-yellow font-bold text-base">0000</span>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <!-- Sound / Synth FX Toggle -->
+                    <button id="soundToggle" onclick="toggleAudio()" class="flex items-center space-x-2 bg-cyber-purple/20 border border-cyber-purple text-cyber-cyan hover:bg-cyber-purple/40 px-3 py-1.5 rounded-md transition duration-200">
+                        <i id="soundIcon" class="fa-solid fa-volume-xmark text-cyber-pink"></i>
+                        <span id="soundText" class="hidden md:inline text-xs font-bold">SYNTH: OFF</span>
+                    </button>
+
+                    <!-- Particle Toggle -->
+                    <button onclick="toggleParticles()" class="flex items-center space-x-2 bg-cyber-cyan/10 border border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan/30 px-3 py-1.5 rounded-md transition duration-200">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyber-cyan"></i>
+                        <span class="hidden md:inline text-xs font-bold">VFX</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-center">
+
+        <!-- ================= VIEW 1: HUB MAIN DASHBOARD ================= -->
+        <div id="view-hub" class="space-y-8 animate-fade-in">
+            <!-- Hero Banner -->
+            <div class="cyber-card rounded-2xl p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-4 max-w-xl z-10 text-center md:text-left">
+                    <div class="inline-block px-3 py-1 bg-cyber-pink/20 border border-cyber-pink text-cyber-pink text-xs font-orbitron font-bold rounded-full">
+                        <i class="fa-solid fa-bolt mr-1"></i> READY PLAYER ONE
+                    </div>
+                    <h2 class="font-orbitron font-extrabold text-3xl md:text-5xl text-white tracking-wide">
+                        STEP INTO THE <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan to-cyber-pink text-glow-cyan">CYBER GRID</span>
+                    </h2>
+                    <p class="text-gray-300 text-base md:text-lg">
+                        Spin the Cyber-Surprise Wheel for randomized retro games, generate synth soundscapes, or challenge your high scores in classic arcade reimagining!
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4 justify-center md:justify-start">
+                        <button onclick="switchView('wheel')" class="cyber-btn px-6 py-3 rounded text-sm md:text-base">
+                            <i class="fa-solid fa-compass-drafting mr-2"></i>SPIN SURPRISE WHEEL
+                        </button>
+                        <button onclick="scrollToGames()" class="cyber-btn cyber-btn-cyan px-6 py-3 rounded text-sm md:text-base">
+                            <i class="fa-solid fa-gamepad mr-2"></i>BROWSE GAMES
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Holographic Arcade Cabinet Art -->
+                <div class="relative w-64 h-64 flex-shrink-0 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-cyber-cyan/20 to-cyber-pink/20 rounded-full blur-xl animate-pulse"></div>
+                    <div class="relative w-56 h-56 border-2 border-cyber-cyan/50 rounded-2xl p-4 flex flex-col items-center justify-center bg-cyber-bg/90 shadow-2xl animate-float">
+                        <i class="fa-solid fa-vr-cardboard text-6xl text-cyber-pink mb-3 animate-pulse"></i>
+                        <span class="font-orbitron text-xs text-cyber-cyan font-bold tracking-widest text-center">SYSTEM STATUS</span>
+                        <span class="font-orbitron text-lg text-cyber-yellow font-black">ONLINE 100%</span>
+                        <div class="mt-3 flex space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-cyber-cyan animate-ping"></span>
+                            <span class="w-2 h-2 rounded-full bg-cyber-pink animate-ping" style="animation-delay: 0.3s"></span>
+                            <span class="w-2 h-2 rounded-full bg-cyber-yellow animate-ping" style="animation-delay: 0.6s"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arcade Mini-Games Grid -->
+            <div id="gamesSection" class="space-y-4">
+                <div class="flex justify-between items-end border-b border-cyber-cyan/30 pb-2">
+                    <h3 class="font-orbitron text-xl md:text-2xl font-bold text-cyber-cyan flex items-center">
+                        <i class="fa-solid fa-layer-group mr-3 text-cyber-pink"></i>ARCADE MINI-GAMES
+                    </h3>
+                    <span class="text-xs text-gray-400 font-orbitron">3 MODULES ACTIVE</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Game Card 1: Neon Snake -->
+                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan flex items-center justify-center text-cyber-cyan text-2xl group-hover:scale-110 transition duration-300">
+                                <i class="fa-solid fa-staff-snake"></i>
+                            </div>
+                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-cyan transition">CYBER SNAKE 2099</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Control the high-speed neon data stream. Collect cyber-bytes without colliding with walls or your own tail.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
+                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="snakeBest">0</span></span>
+                            <button onclick="launchGame('snake')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
+                        </div>
+                    </div>
+
+                    <!-- Game Card 2: Cyber Invaders -->
+                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-lg bg-cyber-pink/10 border border-cyber-pink flex items-center justify-center text-cyber-pink text-2xl group-hover:scale-110 transition duration-300">
+                                <i class="fa-solid fa-user-ninja"></i>
+                            </div>
+                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-pink transition">NEON DEFENDER</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Shoot incoming glitch-bots in space. Dodge lasers and protect the core matrix from invasion!
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
+                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="defenderBest">0</span></span>
+                            <button onclick="launchGame('defender')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
+                        </div>
+                    </div>
+
+                    <!-- Game Card 3: Cyber Reaction Test -->
+                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
+                        <div class="space-y-3">
+                            <div class="w-12 h-12 rounded-lg bg-cyber-purple/20 border border-cyber-purple flex items-center justify-center text-cyber-yellow text-2xl group-hover:scale-110 transition duration-300">
+                                <i class="fa-solid fa-stopwatch"></i>
+                            </div>
+                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-yellow transition">REFLEX MATRIX</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Test your synaptic reaction time! Click target nodes the exact millisecond they ignite.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
+                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="reflexBest">0</span> ms</span>
+                            <button onclick="launchGame('reflex')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Synth Audio Pad Box -->
+            <div class="cyber-card rounded-xl p-6 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyber-cyan/20 pb-3">
+                    <h3 class="font-orbitron text-lg font-bold text-cyber-yellow flex items-center">
+                        <i class="fa-solid fa-sliders mr-2"></i>SYNTHESIZER SOUNDFX PAD
+                    </h3>
+                    <span class="text-xs text-cyber-cyan/70 font-orbitron">REALTIME WEB AUDIO SYNTH</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="playSynthSound('laser')" class="p-3 bg-cyber-bg/80 border border-cyber-cyan/40 hover:border-cyber-cyan rounded text-center text-xs font-orbitron font-bold text-cyber-cyan hover:bg-cyber-cyan/20 transition active:scale-95">
+                        <i class="fa-solid fa-raygun block text-lg mb-1"></i>LASER PING
+                    </button>
+                    <button onclick="playSynthSound('powerup')" class="p-3 bg-cyber-bg/80 border border-cyber-pink/40 hover:border-cyber-pink rounded text-center text-xs font-orbitron font-bold text-cyber-pink hover:bg-cyber-pink/20 transition active:scale-95">
+                        <i class="fa-solid fa-bolt-lightning block text-lg mb-1"></i>POWER UP
+                    </button>
+                    <button onclick="playSynthSound('explosion')" class="p-3 bg-cyber-bg/80 border border-cyber-yellow/40 hover:border-cyber-yellow rounded text-center text-xs font-orbitron font-bold text-cyber-yellow hover:bg-cyber-yellow/20 transition active:scale-95">
+                        <i class="fa-solid fa-bomb block text-lg mb-1"></i>CYBER BOOM
+                    </button>
+                    <button onclick="playSynthSound('coin')" class="p-3 bg-cyber-bg/80 border border-cyber-green/40 hover:border-cyber-green rounded text-center text-xs font-orbitron font-bold text-cyber-green hover:bg-cyber-green/20 transition active:scale-95">
+                        <i class="fa-solid fa-coins block text-lg mb-1"></i>CREDIT INSERT
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="control-panel">
-            <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Execute Spin</button>
-            <div class="result-box">
-                <div class="result-text" id="resultText"></div>
+        <!-- ================= VIEW 2: SURPRISE WHEEL ================= -->
+        <div id="view-wheel" class="hidden space-y-6 max-w-3xl mx-auto w-full animate-fade-in">
+            <div class="text-center space-y-2">
+                <button onclick="switchView('hub')" class="text-xs font-orbitron text-cyber-cyan hover:text-white flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>RETURN TO HUB
+                </button>
+                <h2 class="font-orbitron font-black text-3xl md:text-4xl text-white">
+                    CYBER-SURPRISE <span class="text-cyber-pink text-glow-pink">WHEEL</span>
+                </h2>
+                <p class="text-sm text-gray-300">Spin for a random challenge, game mode, or high-score multiplier!</p>
+            </div>
+
+            <!-- Wheel Container -->
+            <div class="cyber-card rounded-2xl p-6 flex flex-col items-center space-y-6 relative">
+                <!-- Pointer -->
+                <div class="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-cyber-yellow z-20 -mb-6 filter drop-shadow-[0_0_10px_#ffe600]"></div>
+
+                <!-- Canvas Wheel -->
+                <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+                    <canvas id="wheelCanvas" width="320" height="320" class="w-full h-full rounded-full border-4 border-cyber-cyan/50 shadow-[0_0_30px_rgba(0,240,255,0.4)]"></canvas>
+                </div>
+
+                <!-- Spin Trigger Button -->
+                <button id="spinBtn" onclick="spinWheel()" class="cyber-btn px-8 py-3 rounded-lg text-lg">
+                    <i class="fa-solid fa-arrows-spin mr-2"></i>SPIN THE MATRIX
+                </button>
+
+                <!-- Result Card Modal / Box -->
+                <div id="wheelResultBox" class="hidden w-full bg-cyber-bg/90 border border-cyber-pink p-4 rounded-xl text-center space-y-2 animate-bounce">
+                    <span class="text-xs font-orbitron text-cyber-yellow font-bold uppercase tracking-wider">SURPRISE UNLOCKED!</span>
+                    <h3 id="wheelResultTitle" class="font-orbitron text-xl font-extrabold text-white"></h3>
+                    <p id="wheelResultDesc" class="text-sm text-gray-300"></p>
+                    <button id="wheelResultAction" class="cyber-btn cyber-btn-cyan px-4 py-1.5 text-xs rounded mt-2">LAUNCH TASK</button>
+                </div>
             </div>
         </div>
-    </div>
 
+        <!-- ================= VIEW 3: ARCADE GAME CABINET MODAL ================= -->
+        <div id="view-game" class="hidden space-y-4 max-w-4xl mx-auto w-full animate-fade-in">
+            <!-- Top Controls bar -->
+            <div class="flex items-center justify-between border-b border-cyber-cyan/30 pb-3">
+                <button onclick="exitGame()" class="cyber-btn cyber-btn-cyan px-4 py-1.5 text-xs rounded">
+                    <i class="fa-solid fa-chevron-left mr-2"></i>EXIT GAME
+                </button>
+                <div class="flex items-center space-x-6 font-orbitron">
+                    <div class="text-sm"><span class="text-gray-400">SCORE:</span> <span id="currentGameScore" class="text-cyber-cyan font-bold text-lg">0</span></div>
+                    <div class="text-sm"><span class="text-gray-400">HIGH:</span> <span id="currentGameHigh" class="text-cyber-yellow font-bold text-lg">0</span></div>
+                </div>
+            </div>
+
+            <!-- Game Arena Canvas Cabinet -->
+            <div class="cyber-card rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden min-h-[420px]">
+                <canvas id="gameCanvas" width="600" height="400" class="max-w-full h-auto bg-cyber-bg rounded-lg border border-cyber-cyan/50 shadow-[0_0_20px_rgba(0,f0,ff,0.2)]"></canvas>
+
+                <!-- Onscreen Touch Controls for Mobile Users -->
+                <div id="mobileControls" class="mt-4 w-full max-w-md flex justify-between items-center px-4">
+                    <div class="grid grid-cols-3 gap-2 w-36">
+                        <div></div>
+                        <button id="btnUp" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-up"></i></button>
+                        <div></div>
+                        <button id="btnLeft" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button id="btnDown" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-down"></i></button>
+                        <button id="btnRight" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <button id="btnAction" class="w-20 h-20 bg-cyber-pink/30 border-2 border-cyber-pink rounded-full text-cyber-pink font-orbitron font-bold text-xs flex items-center justify-center active:bg-cyber-pink/60">
+                        FIRE / TAP
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-cyber-cyan/20 bg-cyber-bg/90 py-4 px-4 text-center text-xs text-gray-500 font-orbitron">
+        <p>CYBER-SURPRISE HUB &copy; 2099 | RETRO SYNTHWAVE ARCADE EXPERIENCE</p>
+    </footer>
+
+    <!-- Global Sound & Game Logic Script -->
     <script>
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const pointer = document.getElementById('pointer');
-        const resultText = document.getElementById('resultText');
-        const spinBtn = document.getElementById('spinBtn');
-        const confettiCanvas = document.getElementById('confettiCanvas');
-        const confettiCtx = confettiCanvas.getContext('2d');
+        /* ==========================================================================
+           1. AUDIO SYNTHESIZER SYSTEM (Web Audio API)
+           ========================================================================== */
+        let audioCtx = null;
+        let isAudioEnabled = false;
 
-        confettiCanvas.width = window.innerWidth;
-        confettiCanvas.height = window.innerHeight;
-
-        const sectors = [
-            { label: "Lend Joshua Ankle Weights", color: "#1e1b4b", stroke: "#6366f1" },
-            { label: "Kill Chama", color: "#450a0a", stroke: "#f43f5e" },
-            { label: "Don't Lend Joshua Ankle Weights", color: "#422006", stroke: "#eab308" }
-        ];
-
-        const numSectors = sectors.length;
-        const arc = (2 * Math.PI) / numSectors; // 120 degrees (2pi/3) each
-
-        // We measure rotation clockwise in radians starting from angle 0 (3 o'clock position).
-        // The pointer is at TOP (12 o'clock position = 270 degrees = 1.5 * PI radians).
-        let currentRotation = 0; // cumulative rotation angle in radians
-        let isSpinning = false;
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playTickSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.04);
-
-            pointer.classList.add('tick');
-            setTimeout(() => pointer.classList.remove('tick'), 40);
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        function playVictorySound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const notes = [392, 523.25, 659.25, 783.99]; // G4, C5, E5, G5
-            notes.forEach((freq, idx) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
+        function toggleAudio() {
+            initAudio();
+            isAudioEnabled = !isAudioEnabled;
+            const soundIcon = document.getElementById('soundIcon');
+            const soundText = document.getElementById('soundText');
+
+            if (isAudioEnabled) {
+                soundIcon.className = "fa-solid fa-volume-high text-cyber-cyan";
+                soundText.innerText = "SYNTH: ON";
+                playSynthSound('powerup');
+            } else {
+                soundIcon.className = "fa-solid fa-volume-xmark text-cyber-pink";
+                soundText.innerText = "SYNTH: OFF";
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!isAudioEnabled) return;
+            initAudio();
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'laser') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'powerup') {
                 osc.type = 'sine';
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0, audioCtx.currentTime + idx * 0.08);
-                gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + idx * 0.08 + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.4);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(audioCtx.currentTime + idx *
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'explosion') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'coin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(987.77, now); // B5
+                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+        /* ==========================================================================
+           2. NEON BACKGROUND PARTICLE SYSTEM
+           ========================================================================== */
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let particles = [];
+        let particlesActive = true;
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+        resizeBgCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * bgCanvas.width;
+                this.y = Math.random() * bgCanvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
+                this.color = Math.random() > 0.5 ? '#00f0ff' : '#ff007f';
+                this.alpha = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                bgCtx.save();
+                bgCtx.globalAlpha = this.alpha;
+                bgCtx.shadowBlur = 8;
+                bgCtx.shadowColor = this.color;
+                bgCtx.fillStyle = this.color;
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                bgCtx.fill();
+                bgCtx.restore();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // Draw synthwave grid line at bottom
+            bgCtx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+            bgCtx.lineWidth = 1;
+            const gridY = bgCanvas.height * 0.8;
+            for (let x = 0; x < bgCanvas.width; x += 40) {
+                bgCtx.beginPath();
+                bgCtx.moveTo(x, gridY);
+                bgCtx.lineTo(x, bgCanvas.height);
+                bgCtx.stroke();
+            }
+
+            if (particlesActive) {
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        function toggleParticles() {
+            particlesActive = !particlesActive;
+        }
+
+        /* ==========================================================================
+           3. UI VIEW ROUTER & GLOBAL SCORE MANAGEMENT
+           ========================================================================== */
+        let globalScore = parseInt(localStorage.getItem('cyber_global_score') || '0');
+        let snakeHigh = parseInt(localStorage.getItem('cyber_snake_high') || '0');
+        let defenderHigh = parseInt(localStorage.getItem('cyber_defender_high') || '0');
+        let reflexHigh = parseInt(localStorage.getItem('cyber_reflex_high') || '999');
+
+        function updateScoreDisplays() {
+            document.getElementById('globalScore').innerText = globalScore.toString().padStart(4, '0');
+            document.getElementById('snakeBest').innerText = snakeHigh;
+            document.getElementById('defenderBest').innerText = defenderHigh;
+            document.getElementById('reflexBest').innerText = reflexHigh === 999 ? '0' : reflexHigh;
+        }
+        updateScoreDisplays();
+
+        function addGlobalScore(pts) {
+            globalScore += pts;
+            localStorage.setItem('cyber_global_score', globalScore.toString());
+            updateScoreDisplays();
+        }
+
+        function switchView(viewName) {
+            playSynthSound('laser');
+            document.getElementById('view-hub').classList.add('hidden');
+            document.getElementById('view-wheel').classList.add('hidden');
+            document.getElementById('view-game').classList.add('hidden');
+
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+            if (viewName === 'wheel') {
+                drawWheel();
+            }
+        }
+
+        function scrollToGames() {
+            document.getElementById('gamesSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* ==========================================================================
+           4. CYBER SURPRISE WHEEL SYSTEM
+           ========================================================================== */
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const wheelCtx = wheelCanvas.getContext('2d');
+        const wheelSegments = [
+            { title: "SNAKE SPRINT", desc: "Play Snake 2099 & score at least 5 points!", action: () => launchGame('snake') },
+            { title: "DEFENDER MODE", desc: "Defend against space invaders in Neon Defender!", action: () => launchGame('defender') },
+            { title: "REFLEX BOOST", desc: "Test your brain velocity in Reflex Matrix!", action: () => launchGame('reflex') },
+            { title: "BONUS 500 PTS", desc: "Surprise matrix grant! Instant +500 Global Points!", action: () => { addGlobalScore(500); playSynthSound('powerup'); } },
+            { title: "SUPER SYNTH", desc: "Sound pad unlocked! Enjoy retro sound design.", action: () => switchView('hub') }
+        ];
+
+        let startAngle = 0;
+        let isSpinning = false;
+
+        function drawWheel() {
+            const numOptions = wheelSegments.length;
+            const arcSize = (2 * Math.PI) / numOptions;
+            const radius = 150;
+            const centerX = wheelCanvas.width / 2;
+            const centerY = wheelCanvas.height / 2;
+
+            wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+            for (let i = 0; i < numOptions; i++) {
+                const angle = startAngle + i * arcSize;
+                wheelCtx.fillStyle = i % 2 === 0 ? 'rgba(0, 240, 255, 0.8)' : 'rgba(255, 0, 127, 0.8)';
+                wheelCtx.beginPath();
+                wheelCtx.arc(centerX, centerY, radius, angle, angle + arcSize, false);
+                wheelCtx.lineTo(centerX, centerY);
+                wheelCtx.fill();
+                wheelCtx.strokeStyle = '#080811';
+                wheelCtx.lineWidth = 3;
+                wheelCtx.stroke();
+
+                // Draw Text
+                wheelCtx.save();
+                wheelCtx.fillStyle = '#080811';
+                wheelCtx.font = 'bold 12px Orbitron';
+                wheelCtx.translate(centerX + Math.cos(angle + arcSize / 2) * (radius / 1.5), centerY + Math.sin(angle + arcSize / 2) * (radius / 1.5));
+                wheelCtx.rotate(angle + arcSize / 2 + Math.PI / 2);
+                wheelCtx.fillText(wheelSegments[i].title, -wheelCtx.measureText(wheelSegments[i].title).width / 2, 0);
+                wheelCtx.restore();
+            }
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('wheelResultBox').classList.add('hidden');
+            playSynthSound('laser');
+
+            let spinTime = 0;
+            const spinTimeTotal = Math.random() * 2000 + 3000;
+            const spinAngleStart = Math.random() * 10 + 10;
+
+            function rotate() {
+                spinTime += 30;
+                if (spinTime >= spinTimeTotal) {
+                    isSpinning = false;
+                    highlightWheelResult();
+                    return;
+                }
+                const spinAngle = spinAngleStart - (spinTime / spinTimeTotal) * spinAngleStart;
+                startAngle += (spinAngle * Math.PI / 180);
+                drawWheel();
+                requestAnimationFrame(rotate);
+            }
+            rotate();
+        }
+
+        function highlightWheelResult() {
+            const numOptions = wheelSegments.length;
+            const arcSize = (2 * Math.PI) / numOptions;
+            let degrees = (startAngle * 180 / Math.PI) % 360;
+            if (degrees < 0) degrees += 360;
+            
+            // Pointer is at Top (-Math.PI/2)
+            const index = Math.floor((360 - degrees) / (360 / numOptions)) % numOptions;
+            const winningSegment = wheelSegments[index];
+
+            const resultBox = document.getElementById('wheelResultBox');
+            document.getElementById('wheelResultTitle').innerText = winningSegment.title;
+            document.getElementById('wheelResultDesc').innerText = winningSegment.desc;
+            
+            const btn = document.getElementById('wheelResultAction');
+            btn.onclick = () => { winningSegment.action(); };
+
+            resultBox.classList.remove('hidden');
+            playSynthSound('coin');
+        }
+
+        /* ==========================================================================
+           5. GAME ENGINE CABINET (Snake, Defender, Reflex Matrix)
+           ========================================================================== */
+        const gameCanvas = document.getElementById('gameCanvas');
+        const gameCtx = gameCanvas.getContext('2d');
+        let activeGame = null;
+        let gameLoopId = null;
+        let currentGameScore = 0;
+
+        function launchGame(gameType) {
+            switchView('game');
+            activeGame = gameType;
+            currentGameScore = 0;
+            document.getElementById('currentGameScore').innerText = '0';
+
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+
+            if (gameType === 'snake') {
+                document.getElementById('currentGameHigh').innerText = snakeHigh;
+                initSnakeGame();
+            } else if (gameType === 'defender') {
+                document.getElementById('currentGameHigh').innerText = defenderHigh;
+                initDefenderGame();
+            } else if (gameType === 'reflex') {
+                document.getElementById('currentGameHigh').innerText = reflexHigh === 999 ? '0' : reflexHigh;
+                initReflexGame();
+            }
+        }
+
+        function exitGame() {
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            activeGame = null;
+            switchView('hub');
+        }
+
+        // --- MINI-GAME 1: CYBER SNAKE ---
+        let snake = [], snakeDir = {x: 1, y: 0}, snakeFood = {};
+        const gridSize = 20;
+
+        function initSnakeGame() {
+            snake = [{x: 5, y: 5}, {x: 4, y: 5}, {x: 3, y: 5}];
+            snakeDir = {x: 1, y: 0};
+            spawnSnakeFood();
+
+            let lastTime = 0;
+            function snakeLoop(time) {
+                gameLoopId = requestAnimationFrame(snakeLoop);
+                if (time - lastTime < 100) return; // control speed
+                lastTime = time;
+
+                // Move snake
+                const head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+
+                // Check wall collision
+                if (head.x < 0 || head.x >= gameCanvas.width / gridSize || head.y < 0 || head.y >= gameCanvas.height / gridSize) {
+                    return endSnakeGame();
+                }
+                // Check self collision
+                if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                    return endSnakeGame();
+                }
+
+                snake.unshift(head);
+
+                // Check food eat
+                if (head.x === snakeFood.x && head.y === snakeFood.y) {
+                    currentGameScore += 10;
+                    addGlobalScore(10);
+                    document.getElementById('currentGameScore').innerText = currentGameScore;
+                    playSynthSound('coin');
+                    spawnSnakeFood();
+                } else {
+                    snake.pop();
+                }
+
+                // Render
+                gameCtx.fillStyle = '#080811';
+                gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+                // Draw Food
+                gameCtx.fillStyle = '#ff007f';
+                gameCtx.shadowBlur = 10;
+                gameCtx.shadowColor = '#ff007f';
+                gameCtx.fillRect(snakeFood.x * gridSize, snakeFood.y * gridSize, gridSize - 2, gridSize - 2);
+
+                // Draw Snake
+                snake.forEach((seg, i) => {
+                    gameCtx.fillStyle = i === 0 ? '#00f0ff' : '#00ff66';
+                    gameCtx.shadowBlur = 8;
+                    gameCtx.shadowColor = '#00f0ff';
+                    gameCtx.fillRect(seg.x * gridSize, seg.y * gridSize, gridSize - 2, gridSize - 2);
+                });
+                gameCtx.shadowBlur = 0;
+            }
+            snakeLoop(0);
+        }
+
+        function spawnSnakeFood() {
+            snakeFood = {
+                x: Math.floor(Math.random() * (gameCanvas.width / gridSize)),
+                y: Math.floor(Math.random() * (gameCanvas.height / gridSize))
+            };
+        }
+
+        function endSnakeGame() {
+            playSynthSound('explosion');
+            cancelAnimationFrame(gameLoopId);
+            if (currentGameScore > snakeHigh) {
+                snakeHigh = currentGameScore;
+                localStorage.setItem('cyber_snake_high', snakeHigh.toString());
+            }
+            updateScoreDisplays();
+            alert(`GAME OVER! Final Score: ${currentGameScore}`);
+            switchView('hub');
+        }
+
+        // --- MINI-GAME 2: NEON DEFENDER ---
+        let playerX = 280, bullets = [], enemies = [];
+        function initDefenderGame() {
+            playerX = 280;
+            bullets = [];
+            enemies = [];
+
+            let frame = 0;
+            function defenderLoop() {
+                gameLoopId = requestAnimationFrame(defenderLoop);
+                frame++;
+
+                // Clear canvas
+                gameCtx.fillStyle = '#080811';
+                gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+                // Spawn enemies
+                if (frame % 40 === 0) {
+                    enemies.push({x: Math.random() * (gameCanvas.width - 30), y: 0, speed: Math.random() * 2 + 1.5});
+                }
+
+                // Draw Ship
+                gameCtx.fillStyle = '#00f0ff';
+                gameCtx.shadowBlur = 10;
+                gameCtx.shadowColor = '#00f0ff';
+                gameCtx.beginPath();
+                gameCtx.moveTo(playerX + 20, gameCanvas.height - 35);
+                gameCtx.lineTo(playerX, gameCanvas.height - 10);
+                gameCtx.lineTo(playerX + 40, gameCanvas.height - 10);
+                gameCtx.fill();
+
+                // Update Bullets
+                bullets.forEach((b, bi) => {
+                    b.y -= 7;
+                    gameCtx.fillStyle = '#ffe600';
+                    gameCtx.fillRect(b.x, b.y, 4, 10);
+
+                    // Check Enemy Collision
+                    enemies.forEach((e, ei) => {
+                        if (b.x > e.x && b.x < e.x + 30 && b.y > e.y && b.y < e.y + 20) {
+                            bullets.splice(bi, 1);
+                            enemies.splice(ei, 1);
+                            currentGameScore += 20;
+                            addGlobalScore(20);
+                            document.getElementById('currentGameScore').innerText = currentGameScore;
+                            playSynthSound('explosion');
+                        }
+                    });
+                });
+
+                // Update Enemies
+                enemies.forEach((e, ei) => {
+                    e.y += e.speed;
+                    gameCtx.fillStyle = '#ff007f';
+                    gameCtx.fillRect(e.x, e.y, 30, 20);
+
+                    if (e.y > gameCanvas.height - 40) {
+                        cancelAnimationFrame(gameLoopId);
+                        playSynthSound('explosion');
+                        if (currentGameScore > defenderHigh) {
+                            defenderHigh = currentGameScore;
+                            localStorage.setItem('cyber_defender_high', defenderHigh.toString());
+                        }
+                        updateScoreDisplays();
+                        alert(`BASE DESTROYED! Score: ${currentGameScore}`);
+                        return switchView('hub');
+                    }
+                });
+                gameCtx.shadowBlur = 0;
+            }
+            defenderLoop();
+        }
+
+        // --- MINI-GAME 3: REFLEX MATRIX ---
+        let reflexTarget = {x: 0, y: 0, time: 0};
+        let reflexState = 'waiting';
+
+        function initReflexGame() {
+            reflexState = 'waiting';
+            gameCtx.fillStyle = '#080811';
+            gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            gameCtx.fillStyle = '#00f0ff';
+            gameCtx.font = '20px Orbitron';
+            gameCtx.fillText("CLICK/TAP CANVAS TO START TEST", 110, 200);
+        }
+
+        gameCanvas.addEventListener('click', (e) => {
+            if (activeGame === 'reflex') {
+                if (reflexState === 'waiting') {
+                    reflexState = 'ready';
+                    gameCtx.fillStyle = '#080811';
+                    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+                    gameCtx.fillStyle = '#ffe600';
+                    gameCtx.fillText("WAIT FOR NEON NODE TO IGNITE...", 110, 200);
+
+                    setTimeout(() => {
+                        if (activeGame !== 'reflex') return;
+                        reflexState = 'active';
+                        reflexTarget = {
+                            x: Math.random() * (gameCanvas.width - 60) + 30,
+                            y: Math.random() * (gameCanvas.height - 60) + 30,
+                            time: performance.now()
+                        };
+                        gameCtx.fillStyle = '#080811';
+                        gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+                        gameCtx.fillStyle = '#ff007f';
+                        gameCtx.shadowBlur = 20;
+                        gameCtx.shadowColor = '#ff007f';
+                        gameCtx.beginPath();
+                        gameCtx.arc(reflexTarget.x, reflexTarget.y, 30, 0, Math.PI * 2);
+                        gameCtx.fill();
+                        playSynthSound('laser');
+                    }, Math.random() * 2000 + 1500);
+                } else if (reflexState === 'active') {
+                    const reactTime = Math.round(performance.now() - reflexTarget.time);
+                    reflexState = 'waiting';
+                    playSynthSound('coin');
+                    currentGameScore = reactTime;
+                    document.getElementById('currentGameScore').innerText = reactTime + 'ms';
+
+                    if (reactTime < reflexHigh) {
+                        reflexHigh = reactTime;
+                        localStorage.setItem('cyber_reflex_high', reflexHigh.toString());
+                        addGlobalScore(100);
+                    }
+
+                    updateScoreDisplays();
+                    gameCtx.fillStyle = '#080811';
+                    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+                    gameCtx.fillStyle = '#00ff66';
+                    gameCtx.fillText(`REACTION: ${reactTime} ms! TAP TO RETRY`, 120, 200);
+                }
+            }
+        });
+
+        /* ==========================================================================
+           6. INPUT HANDLERS & TOUCH SUPPORT
+           ========================================================================== */
+        window.addEventListener('keydown', (e) => {
+            if (activeGame === 'snake') {
+                if (e.key === 'ArrowUp' && snakeDir.y === 0) snakeDir = {x: 0, y: -1};
+                if (e.key === 'ArrowDown' && snakeDir.y === 0) snakeDir = {x: 0, y: 1};
+                if (e.key === 'ArrowLeft' && snakeDir.x === 0) snakeDir = {x: -1, y: 0};
+                if (e.key === 'ArrowRight' && snakeDir.x === 0) snakeDir = {x: 1, y: 0};
+            } else if (activeGame === 'defender') {
+                if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 25;
+                if (e.key === 'ArrowRight' && playerX < gameCanvas.width - 40) playerX += 25;
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    bullets.push({x: playerX + 18, y: gameCanvas.height - 35});
+                    playSynthSound('laser');
+                }
+            }
+        });
+
+        // Mobile Onscreen D-Pad Listeners
+        document.getElementById('btnUp').onclick = () => { if (activeGame==='snake' && snakeDir.y===0) snakeDir={x:0, y:-1}; };
+        document.getElementById('btnDown').onclick = () => { if (activeGame==='snake' && snakeDir.y===0) snakeDir={x:0, y:1}; };
+        document.getElementById('btnLeft').onclick = () => {
+            if (activeGame==='snake' && snakeDir.x===0) snakeDir={x:-1, y:0};
+            if (activeGame==='defender' && playerX > 0) playerX -= 30;
+        };
+        document.getElementById('btnRight').onclick = () => {
+            if (activeGame==='snake' && snakeDir.x===0) snakeDir={x:1, y:0};
+            if (activeGame==='defender' && playerX < gameCanvas.width - 40) playerX += 30;
+        };
+        document.getElementById('btnAction').onclick = () => {
+            if (activeGame === 'defender') {
+                bullets.push({x: playerX + 18, y: gameCanvas.height - 35});
+                playSynthSound('laser');
+            }
+        };
+
+    </script>
+</body>
+</html>
