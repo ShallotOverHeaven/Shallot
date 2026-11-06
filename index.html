@@ -1,594 +1,328 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AndrewTesla Chatbot</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            50: '#f8fafc',
-                            100: '#f1f5f9',
-                            800: '#1e293b',
-                            900: '#0f172a',
-                            950: '#020617',
-                        }
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AndrewTesla Chatbot</title>
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Highlight.js & Marked.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+          }
         }
-    </script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(100, 116, 139, 0.2);
-            border-radius: 9999px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(100, 116, 139, 0.4);
-        }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .animate-pulse-slow {
-            animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); }
+    .chat-container { height: calc(100vh - 140px); }
+    pre code { border-radius: 0.5rem; padding: 1rem !important; }
+  </style>
 </head>
-<body class="bg-dark-950 text-slate-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden transition-opacity"></div>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased h-screen overflow-hidden flex">
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-30 w-72 bg-dark-900 border-r border-slate-800 flex flex-col transition-transform duration-300 -translate-x-full md:translate-x-0">
-        <!-- Sidebar Header -->
-        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i data-lucide="zap" class="w-5 h-5 text-white"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-slate-100 tracking-tight">AndrewTesla</h1>
-                    <span class="text-xs text-amber-400 font-medium flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Premium Locked
-                    </span>
-                </div>
-            </div>
-            <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+  <!-- Sidebar -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
+    <div class="p-4">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+            AT
+          </div>
+          <span class="font-bold text-lg text-slate-100">AndrewTesla</span>
         </div>
+      </div>
 
-        <!-- New Chat Button -->
-        <div class="p-3">
-            <button id="new-chat-btn" class="w-full flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200 active:scale-[0.98]">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>New Conversation</span>
-            </button>
+      <button id="newChatBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-4 rounded-xl flex items-center gap-2 text-sm transition">
+        <i class="fa-solid fa-plus text-xs"></i> New Conversation
+      </button>
+
+      <div class="mt-6">
+        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Model Engine</h3>
+        <div class="p-3 bg-slate-850 border border-indigo-500/30 rounded-xl bg-indigo-950/20 text-xs">
+          <span class="text-indigo-400 font-bold block mb-1">⚡ Gemini 3.5 Flash Lite</span>
+          <p class="text-slate-400">High-speed, low-latency execution engine.</p>
         </div>
-
-        <!-- Chat History List -->
-        <div class="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar space-y-1">
-            <div class="text-xs font-semibold text-slate-500 px-3 py-2 uppercase tracking-wider">Recent Chats</div>
-            <div id="chat-history-list" class="space-y-1">
-                <!-- Dynamically populated chat sessions -->
-            </div>
-        </div>
-
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-semibold text-sm border border-slate-700">
-                    U
-                </div>
-                <div class="text-sm">
-                    <p class="font-medium text-slate-200 leading-none">Workspace User</p>
-                    <p class="text-xs text-slate-400 mt-1">Free Tier</p>
-                </div>
-            </div>
-            <button id="clear-all-btn" title="Clear All Chats" class="text-slate-400 hover:text-rose-400 p-2 rounded-lg hover:bg-slate-800 transition-colors">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Chat Container -->
-    <main class="flex-1 flex flex-col h-full bg-dark-950 relative overflow-hidden">
-        
-        <!-- Top Navbar -->
-        <header class="h-16 border-b border-slate-800/80 bg-dark-900/50 backdrop-blur-md px-4 flex items-center justify-between z-10">
-            <div class="flex items-center space-x-3">
-                <button id="open-sidebar" class="md:hidden text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-                <div>
-                    <h2 id="current-chat-title" class="font-semibold text-slate-200 text-sm md:text-base">New Conversation</h2>
-                    <p class="text-xs text-slate-400 hidden sm:block">Ask anything or choose a suggestion below</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center space-x-2">
-                <button id="theme-toggle" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors" title="Toggle Theme">
-                    <i data-lucide="sparkles" class="w-5 h-5"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- Message History Area -->
-        <div id="chat-container" class="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-6 custom-scrollbar">
-            <!-- Welcome Hero (shown when no messages) -->
-        <div id="welcome-hero" class="max-w-2xl mx-auto text-center py-12 px-4">
-            <div class="w-16 h-16 bg-gradient-to-tr from-amber-500 via-indigo-500 to-purple-500 rounded-2xl mx-auto flex items-center justify-center shadow-xl shadow-amber-500/20 mb-6">
-                <i data-lucide="zap" class="w-8 h-8 text-white"></i>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold text-slate-100 tracking-tight mb-3">Welcome to AndrewTesla AI</h3>
-            <p class="text-slate-400 text-sm md:text-base mb-8 leading-relaxed">
-                Send a message to get started. All responses require unlocking.
-            </p>
-
-            <!-- Suggestion Chips -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-                <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
-                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                        <i data-lucide="message-square" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium text-slate-200 text-sm">Ask anything</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Send your question here</p>
-                    </div>
-                </button>
-                    
-                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
-                        <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                            <i data-lucide="lightbulb" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-slate-200 text-sm">Startup ideas</p>
-                            <p class="text-xs text-slate-400 mt-0.5">AI tools for remote team productivity</p>
-                        </div>
-                    </button>
-
-                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
-                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-slate-200 text-sm">Explain quantum computing</p>
-                            <p class="text-xs text-slate-400 mt-0.5">In simple terms for a beginner</p>
-                        </div>
-                    </button>
-
-                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
-                        <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                            <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-slate-200 text-sm">Draft an email</p>
-                            <p class="text-xs text-slate-400 mt-0.5">Professional follow-up after interview</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Typing Indicator Container -->
-        <div id="typing-indicator" class="hidden px-4 md:px-6 py-2">
-            <div class="flex items-start space-x-3 max-w-4xl mx-auto">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white shrink-0 shadow-md">
-                    <i data-lucide="bot" class="w-4 h-4"></i>
-                </div>
-                <div class="bg-dark-900 border border-slate-800 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center space-x-2">
-                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce"></span>
-                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
-                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Footer Area -->
-        <div class="p-4 md:p-6 bg-dark-950 border-t border-slate-800/80">
-            <div class="max-w-4xl mx-auto">
-                <form id="chat-form" class="relative flex items-center">
-                    <textarea 
-                        id="user-input" 
-                        rows="1" 
-                        placeholder="Message AndrewTesla..." 
-                        class="w-full bg-dark-900 border border-slate-800 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-2xl pl-4 pr-24 py-3.5 text-slate-100 placeholder-slate-500 text-sm resize-none custom-scrollbar outline-none shadow-inner transition-all"
-                        style="max-height: 150px;"
-                    ></textarea>
-                    
-                    <div class="absolute right-2.5 flex items-center space-x-1">
-                        <button 
-                            type="submit" 
-                            id="send-btn" 
-                            class="w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 text-white flex items-center justify-center transition-all duration-200 shadow-md shadow-indigo-600/20"
-                            disabled
-                        >
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </form>
-                <p class="text-center text-xs text-slate-500 mt-2.5">
-                    AI Nexus can make mistakes. Verify important info.
-                </p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3">
-        <i data-lucide="info" class="w-5 h-5 text-indigo-400"></i>
-        <span id="toast-message" class="text-sm font-medium">Notification message</span>
+      </div>
     </div>
 
-    <!-- Application Script -->
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+    <!-- User & Settings Footer -->
+    <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-semibold text-slate-300">
+          U
+        </div>
+        <div>
+          <p class="text-sm font-medium text-slate-200">Workspace User</p>
+          <p id="unlockBadge" class="text-xs text-amber-400 font-semibold">Locked Tier</p>
+        </div>
+      </div>
+      <button id="openSettings" class="text-slate-400 hover:text-slate-200 p-2 rounded-lg hover:bg-slate-800 transition">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+  </aside>
 
-        // State variables
-        let chats = JSON.parse(localStorage.getItem('andrewtesla_chats')) || [];
-        let currentChatId = null;
-        let messages = [];
-        let isGenerating = false;
-        let isUnlocked = localStorage.getItem('andrewtesla_unlocked') === 'true';
+  <!-- Main Chat Workspace -->
+  <main class="flex-1 flex flex-col h-full bg-slate-950 relative">
 
-        // DOM Elements
-        const chatContainer = document.getElementById('chat-container');
-        const welcomeHero = document.getElementById('welcome-hero');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const chatHistoryList = document.getElementById('chat-history-list');
-        const newChatBtn = document.getElementById('new-chat-btn');
-        const clearAllBtn = document.getElementById('clear-all-btn');
-        const sidebar = document.getElementById('sidebar');
-        const openSidebarBtn = document.getElementById('open-sidebar');
-        const closeSidebarBtn = document.getElementById('close-sidebar');
-        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-        const currentChatTitle = document.getElementById('current-chat-title');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
+    <!-- Top Navigation Bar -->
+    <header class="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur">
+      <div class="flex items-center gap-3">
+        <h2 class="font-semibold text-slate-200">AndrewTesla Chatbot</h2>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 uppercase tracking-wide">
+          gemini-3.5-flash-lite
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="openSettingsMobile" class="md:hidden text-slate-400 p-2">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </header>
 
-        // Toggle Sidebar on Mobile
-        function toggleSidebar(open) {
-            if (open) {
-                sidebar.classList.remove('-translate-x-full');
-                sidebarBackdrop.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                sidebarBackdrop.classList.add('hidden');
-            }
-        }
+    <!-- Chat Messages Window -->
+    <div id="chatWindow" class="flex-1 overflow-y-auto p-6 space-y-6">
+      <div class="max-w-3xl mx-auto space-y-6" id="messagesContainer">
+        
+        <!-- Welcome Banner -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto text-xl border border-indigo-500/30">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h1 class="text-xl font-bold text-slate-100">Welcome to AndrewTesla</h1>
+          <p class="text-slate-400 text-sm max-w-md mx-auto">
+            Powered by the <span class="text-indigo-400 font-semibold">Gemini 3.5 Flash Lite</span> engine. Type your prompt below to start.
+          </p>
+        </div>
 
-        openSidebarBtn.addEventListener('click', () => toggleSidebar(true));
-        closeSidebarBtn.addEventListener('click', () => toggleSidebar(false));
-        sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
+      </div>
+    </div>
 
-        // Auto-resize textarea
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-            sendBtn.disabled = this.value.trim() === '' || isGenerating;
-        });
+    <!-- Input Bar Area -->
+    <div class="p-4 border-t border-slate-800 bg-slate-950">
+      <form id="chatForm" class="max-w-3xl mx-auto flex items-center gap-2">
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            id="userInput" 
+            placeholder="Message AndrewTesla (Gemini 3.5 Flash Lite)..." 
+            class="w-full bg-slate-900 border border-slate-800 text-slate-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-indigo-500 transition shadow-inner"
+            required 
+            autocomplete="off"
+          />
+        </div>
+        <button 
+          type="submit" 
+          id="sendBtn" 
+          class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl transition flex items-center justify-center shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
 
-        // Enter key to submit (Shift+Enter for newline)
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                if (!sendBtn.disabled) {
-                    chatForm.requestSubmit();
-                }
-            }
-        });
+  </main>
 
-        // Show Toast helper
-        function showToast(message) {
-            toastMessage.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
+  <!-- Settings Dialog Modal -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-slate-100">API Settings</h3>
+        <button id="closeSettings" class="text-slate-400 hover:text-slate-200">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
 
-        // Initialize chats list
-        function initChats() {
-            if (chats.length === 0) {
-                createNewChat();
-            } else {
-                loadChat(chats[0].id);
-            }
-            renderChatHistory();
-        }
+      <div class="space-y-2">
+        <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gemini API Key</label>
+        <input 
+          type="password" 
+          id="apiKeyInput" 
+          placeholder="Paste AI Studio API Key here..." 
+          class="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+        />
+        <p class="text-xs text-slate-500">Target Model: <span class="font-mono text-indigo-400">gemini-3.5-flash-lite</span></p>
+      </div>
 
-        function createNewChat() {
-            const newChat = {
-                id: 'chat_' + Date.now(),
-                title: 'New Conversation',
-                messages: []
-            };
-            chats.unshift(newChat);
-            saveChats();
-            loadChat(newChat.id);
-            renderChatHistory();
-            if (window.innerWidth < 768) toggleSidebar(false);
-        }
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="saveSettingsBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
 
-        function loadChat(chatId) {
-            currentChatId = chatId;
-            const chat = chats.find(c => c.id === chatId);
-            if (chat) {
-                messages = chat.messages;
-                currentChatTitle.textContent = chat.title;
-                renderMessages();
-            }
-        }
+  <script>
+    // System State
+    let isUnlocked = false;
+    let chatHistory = [];
+    let customApiKey = localStorage.getItem('gemini_api_key') || "";
 
-        function saveChats() {
-            localStorage.setItem('andrewtesla_chats', JSON.stringify(chats));
-        }
+    // DOM Elements
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const messagesContainer = document.getElementById('messagesContainer');
+    const sendBtn = document.getElementById('sendBtn');
+    const unlockBadge = document.getElementById('unlockBadge');
+    
+    // Modal Controls
+    const settingsModal = document.getElementById('settingsModal');
+    const openSettings = document.getElementById('openSettings');
+    const openSettingsMobile = document.getElementById('openSettingsMobile');
+    const closeSettings = document.getElementById('closeSettings');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
-        function renderChatHistory() {
-            chatHistoryList.innerHTML = '';
-            chats.forEach(chat => {
-                const isActive = chat.id === currentChatId;
-                const div = document.createElement('div');
-                div.className = `group flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-amber-400' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`;
-                
-                div.innerHTML = `
-                    <div class="flex items-center space-x-3 truncate flex-1" onclick="loadChat('${chat.id}')">
-                        <i data-lucide="message-square" class="w-4 h-4 shrink-0"></i>
-                        <span class="truncate">${escapeHtml(chat.title)}</span>
-                    </div>
-                    <button onclick="deleteChat(event, '${chat.id}')" class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 rounded transition-opacity">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                    </button>
-                `;
-                chatHistoryList.appendChild(div);
-            });
-            lucide.createIcons();
-        }
+    if (customApiKey) apiKeyInput.value = customApiKey;
 
-        function deleteChat(event, chatId) {
-            event.stopPropagation();
-            chats = chats.filter(c => c.id !== chatId);
-            saveChats();
-            if (chats.length === 0) {
-                createNewChat();
-            } else if (currentChatId === chatId) {
-                loadChat(chats[0].id);
-            }
-            renderChatHistory();
-        }
+    openSettings.onclick = () => settingsModal.classList.replace('hidden', 'flex');
+    if(openSettingsMobile) openSettingsMobile.onclick = () => settingsModal.classList.replace('hidden', 'flex');
+    closeSettings.onclick = () => settingsModal.classList.replace('flex', 'hidden');
 
-        clearAllBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete all conversations?')) {
-                chats = [];
-                saveChats();
-                createNewChat();
-                renderChatHistory();
-                showToast('All chats cleared');
-            }
-        });
+    saveSettingsBtn.onclick = () => {
+      customApiKey = apiKeyInput.value.trim();
+      localStorage.setItem('gemini_api_key', customApiKey);
+      settingsModal.classList.replace('flex', 'hidden');
+    };
 
-        newChatBtn.addEventListener('click', createNewChat);
+    // Chat Message Submission Handler
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
 
-        // Render Chat Messages
-        function renderMessages() {
-            if (messages.length === 0) {
-                welcomeHero.classList.remove('hidden');
-                chatContainer.innerHTML = '';
-                chatContainer.appendChild(welcomeHero);
-                return;
-            }
+      // Render User Bubble
+      appendMessage('user', message);
+      userInput.value = '';
 
-            welcomeHero.classList.add('hidden');
-            chatContainer.innerHTML = '';
+      // Check Secret Unlock Code
+      if (message === "nigganigganigga") {
+        isUnlocked = true;
+        unlockBadge.textContent = "Unlocked Tier";
+        unlockBadge.className = "text-xs text-emerald-400 font-semibold";
+        appendMessage('bot', "🔓 **Messages Unlocked!** Connected directly to **Gemini 3.5 Flash Lite**. Ask me anything!");
+        return;
+      }
 
-            messages.forEach((msg) => {
-                const isUser = msg.role === 'user';
-                const messageWrapper = document.createElement('div');
-                messageWrapper.className = `flex items-start space-x-3 max-w-4xl mx-auto ${isUser ? 'justify-end' : ''}`;
+      // Handle Locked Mode
+      if (!isUnlocked) {
+        appendMessage('bot', "give andrew ₹100 to unlock one message");
+        return;
+      }
 
-                if (isUser) {
-                    messageWrapper.innerHTML = `
-                        <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[85%] sm:max-w-[75%] shadow-md leading-relaxed whitespace-pre-wrap">${escapeHtml(msg.text)}</div>
-                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-semibold text-xs shrink-0 border border-slate-700">U</div>
-                    `;
-                } else {
-                    const formattedContent = marked.parse(msg.text);
-                    messageWrapper.innerHTML = `
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-500 flex items-center justify-center text-white shrink-0 shadow-md">
-                            <i data-lucide="zap" class="w-4 h-4"></i>
-                        </div>
-                        <div class="bg-dark-900 border border-amber-500/30 text-amber-300 rounded-2xl rounded-tl-sm px-5 py-4 text-sm max-w-[85%] sm:max-w-[85%] shadow-lg leading-relaxed font-semibold">
-                            ${formattedContent}
-                        </div>
-                    `;
-                }
-                chatContainer.appendChild(messageWrapper);
-            });
-            lucide.createIcons();
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+      // Handle Unlocked Mode via Gemini 3.5 Flash Lite Engine
+      sendBtn.disabled = true;
+      const loadingId = appendLoadingBubble();
 
-        // Suggestion click listeners
-        document.querySelectorAll('.suggestion-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                const text = chip.querySelector('p').textContent;
-                userInput.value = text;
-                userInput.style.height = 'auto';
-                userInput.style.height = (userInput.scrollHeight) + 'px';
-                sendBtn.disabled = false;
-                chatForm.requestSubmit();
-            });
-        });
+      try {
+        const responseText = await fetchGemini35FlashLiteResponse(message);
+        removeLoadingBubble(loadingId);
+        appendMessage('bot', responseText);
+      } catch (err) {
+        removeLoadingBubble(loadingId);
+        appendMessage('bot', `⚠️ **Error connecting to Gemini 3.5 Flash Lite:** ${err.message}`);
+      } finally {
+        sendBtn.disabled = false;
+      }
+    });
 
-        // Fixed response logic
-        async function getAndrewResponse(userMessage) {
-            const cleanText = userMessage.toLowerCase().trim();
+    // Gemini 3.5 Flash Lite Direct API Fetch Engine
+    async function fetchGemini35FlashLiteResponse(userPrompt) {
+      const key = customApiKey || "";
+      
+      // Construct conversation turns
+      chatHistory.push({ role: "user", parts: [{ text: userPrompt }] });
 
-            if (cleanText === "nigganigganigga") {
-                isUnlocked = true;
-                localStorage.setItem('andrewtesla_unlocked', 'true');
-                return "🎉 **Secret Code Accepted!** Every message is now fully unlocked. How can AndrewTesla assist you today?";
-            }
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${key}`;
 
-            if (!isUnlocked) {
-                return "give andrew ₹100 to unlock one message";
-            }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: chatHistory,
+          generationConfig: {
+            temperature: 0.7
+          }
+        })
+      });
 
-            // Real AI response generation with local fallback for hosted pages (GitHub Pages)
-            try {
-                const apiKey = ""; // Canvas runtime key
-                if (apiKey) {
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: userMessage }] }],
-                            systemInstruction: {
-                                parts: [{ text: "You are AndrewTesla, an ultra-smart, helpful, and sleek AI assistant. Answer accurately, concisely, and with clean markdown formatting." }]
-                            }
-                        })
-                    });
-                    const result = await response.json();
-                    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (aiText) return aiText;
-                }
-            } catch (err) {
-                console.error("API error, switching to smart local responder:", err);
-            }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `API error code ${res.status}`);
+      }
 
-            // Built-in intelligent responder for static web hosts (GitHub Pages)
-            return generateSmartResponse(userMessage);
-        }
+      const data = await res.json();
+      const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response text returned.";
+      
+      // Add model turn to conversation context
+      chatHistory.push({ role: "model", parts: [{ text: botReply }] });
+      return botReply;
+    }
 
-        // Smart client-side responder for math, greetings, and queries when deployed without an external API backend
-        function generateSmartResponse(input) {
-            const query = input.trim();
-            const lower = query.toLowerCase();
+    // Render Helpers
+    function appendMessage(sender, text) {
+      const isUser = sender === 'user';
+      const bubble = document.createElement('div');
+      bubble.className = `flex gap-4 ${isUser ? 'justify-end' : 'justify-start'}`;
 
-            // Math expressions evaluation (e.g. root of 68, 5+5, 12 * 4, sqrt(68))
-            if (lower.includes('root of') || lower.includes('sqrt') || /^[0-9\s\+\-\*\/\^\(\)\.\%]+$/.test(query)) {
-                try {
-                    let expr = lower
-                        .replace(/what is/g, '')
-                        .replace(/the/g, '')
-                        .replace(/root of/g, 'Math.sqrt')
-                        .replace(/sqrt/g, 'Math.sqrt')
-                        .replace(/square root of/g, 'Math.sqrt')
-                        .trim();
-                    
-                    if (expr.startsWith('Math.sqrt')) {
-                        const numMatch = expr.match(/\d+(\.\d+)?/);
-                        if (numMatch) {
-                            const val = parseFloat(numMatch[0]);
-                            const result = Math.sqrt(val);
-                            return `The square root of **${val}** is **${result}** (approx. **${result.toFixed(4)}**).`;
-                        }
-                    }
+      const formattedContent = isUser ? text : marked.parse(text);
 
-                    // Direct math calculation
-                    const mathVal = eval(expr.replace(/[^0-9\+\-\*\/\.\(\)]/g, ''));
-                    if (typeof mathVal === 'number' && !isNaN(mathVal)) {
-                        return `The answer to **${query}** is **${mathVal}**.`;
-                    }
-                } catch(e) {}
-            }
+      bubble.innerHTML = `
+        <div class="flex gap-3 max-w-2xl ${isUser ? 'flex-row-reverse' : 'flex-row'}">
+          <div class="w-8 h-8 rounded-full ${isUser ? 'bg-indigo-600' : 'bg-slate-800 border border-slate-700'} flex items-center justify-center font-bold text-xs shrink-0">
+            ${isUser ? 'U' : 'AT'}
+          </div>
+          <div class="rounded-2xl px-4 py-3 text-sm ${isUser ? 'bg-indigo-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'} shadow-md">
+            ${isUser ? text : `<div class="prose prose-invert max-w-none text-sm">${formattedContent}</div>`}
+          </div>
+        </div>
+      `;
 
-            // General Conversational Answers
-            if (/^(hi|hello|hey|yo|sup|greetings)/.test(lower)) {
-                return "Hello! I am **AndrewTesla**. All features are unlocked for your session. What would you like to build, calculate, or ask about today?";
-            }
-            
-            if (lower.includes("who are you") || lower.includes("your name")) {
-                return "I am **AndrewTesla**, your modern high-speed AI assistant!";
-            }
+      messagesContainer.appendChild(bubble);
+      hljs.highlightAll();
+      scrollToBottom();
+    }
 
-            if (lower.includes("what") || lower.includes("how") || lower.includes("why") || lower.includes("can you")) {
-                return `**AndrewTesla Response:**\n\nHere is a detailed breakdown regarding **"${escapeHtml(query)}"**:\n\n- **Status:** Unlocked & Operational\n- **Analysis:** Your request is processed successfully.\n- **Recommendation:** You can ask math problems, coding questions, general knowledge, or creative writing prompts anytime!`;
-            }
+    function appendLoadingBubble() {
+      const id = 'loading-' + Date.now();
+      const bubble = document.createElement('div');
+      bubble.id = id;
+      bubble.className = 'flex gap-3 items-center text-slate-400 text-sm';
+      bubble.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs">AT</div>
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2.5 rounded-2xl">
+          <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
+          <span>Thinking with Gemini 3.5 Flash Lite...</span>
+        </div>
+      `;
+      messagesContainer.appendChild(bubble);
+      scrollToBottom();
+      return id;
+    }
 
-            return `**AndrewTesla:** Received your prompt **"${escapeHtml(query)}"**. How else can I assist you today?`;
-        }
+    function removeLoadingBubble(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
 
-        // Handle Form Submit
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text || isGenerating) return;
-
-            // Reset input
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            sendBtn.disabled = true;
-
-            // Append user message
-            messages.push({ role: 'user', text: text });
-            
-            // Update chat title if first message
-            const currentChat = chats.find(c => c.id === currentChatId);
-            if (currentChat && currentChat.messages.length === 0) {
-                currentChat.title = text.length > 30 ? text.substring(0, 30) + '...' : text;
-                currentChatTitle.textContent = currentChat.title;
-                renderChatHistory();
-            }
-
-            renderMessages();
-
-            // Show typing indicator
-            isGenerating = true;
-            typingIndicator.classList.remove('hidden');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            try {
-                const responseText = await getAndrewResponse(text);
-                messages.push({ role: 'model', text: responseText });
-                saveChats();
-            } finally {
-                isGenerating = false;
-                typingIndicator.classList.add('hidden');
-                renderMessages();
-            }
-        });
-
-        // Helper function to escape HTML
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // Initialize application on load
-        initChats();
-    </script>
+    function scrollToBottom() {
+      const chatWindow = document.getElementById('chatWindow');
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+  </script>
 </body>
 </html>
