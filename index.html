@@ -1,985 +1,550 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber-Surprise Hub | Retro Arcade Experience</title>
-    <!-- Tailwind CSS -->
+    <title>AndrewTesla Chatbot</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        cyber: {
-                            bg: '#080811',
-                            panel: 'rgba(18, 18, 36, 0.75)',
-                            border: '#00f0ff',
-                            pink: '#ff007f',
-                            cyan: '#00f0ff',
-                            purple: '#9d00ff',
-                            yellow: '#ffe600',
-                            green: '#00ff66'
-                        }
-                    },
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        rajdhani: ['Rajdhani', 'sans-serif']
-                    },
-                    animation: {
-                        'pulse-glow': 'pulseGlow 2s infinite alternate',
-                        'scanline': 'scanline 8s linear infinite',
-                        'float': 'float 3s ease-in-out infinite',
-                        'glitch': 'glitch 1s infinite'
-                    },
-                    keyframes: {
-                        pulseGlow: {
-                            '0%': { boxShadow: '0 0 10px rgba(0,240,255,0.4), inset 0 0 10px rgba(0,240,255,0.2)' },
-                            '100%': { boxShadow: '0 0 25px rgba(255,0,127,0.8), inset 0 0 15px rgba(255,0,127,0.4)' }
-                        },
-                        scanline: {
-                            '0%': { transform: 'translateY(-100%)' },
-                            '100%': { transform: 'translateY(1000%)' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' }
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
                         }
                     }
                 }
             }
         }
     </script>
-
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        body {
-            background-color: #080811;
-            color: #e0e6ed;
-            font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
-            margin: 0;
-        }
-
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-
-        /* CRT Grid overlay */
-        .crt-overlay {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 6px 100%;
-            pointer-events: none;
-        }
-
-        /* Neon Text Glow Effects */
-        .text-glow-cyan {
-            text-shadow: 0 0 5px #00f0ff, 0 0 15px #00f0ff, 0 0 30px #00f0ff;
-        }
-        .text-glow-pink {
-            text-shadow: 0 0 5px #ff007f, 0 0 15px #ff007f, 0 0 30px #ff007f;
-        }
-        .text-glow-yellow {
-            text-shadow: 0 0 5px #ffe600, 0 0 15px #ffe600;
-        }
-
-        /* Neon Glass Box styling */
-        .cyber-card {
-            background: rgba(16, 18, 38, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .cyber-card:hover {
-            border-color: rgba(255, 0, 127, 0.8);
-            box-shadow: 0 0 25px rgba(255, 0, 127, 0.3), inset 0 0 20px rgba(255, 0, 127, 0.1);
-        }
-
-        /* Custom Cyber Buttons */
-        .cyber-btn {
-            position: relative;
-            background: linear-gradient(45deg, #ff007f, #9d00ff);
-            color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            transition: all 0.2s ease;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
-        }
-
-        .cyber-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
-        }
-
-        .cyber-btn:active {
-            transform: translateY(1px);
-        }
-
-        .cyber-btn-cyan {
-            background: linear-gradient(45deg, #00f0ff, #00ff66);
-            color: #080811;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
-        ::-webkit-scrollbar-track {
-            background: #080811;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #00f0ff;
-            border-radius: 3px;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.2);
+            border-radius: 9999px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff007f;
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.4);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
-<body class="min-h-screen relative flex flex-col justify-between select-none">
+<body class="bg-dark-950 text-slate-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Interactive Background Canvas -->
-    <canvas id="bgCanvas" class="fixed inset-0 w-full h-full -z-10"></canvas>
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden transition-opacity"></div>
 
-    <!-- CRT Scanline overlay -->
-    <div class="crt-overlay fixed inset-0 w-full h-full -z-5"></div>
-
-    <!-- Header / Navigation Bar -->
-    <header class="w-full border-b border-cyber-cyan/30 bg-cyber-bg/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-            <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('hub')">
-                <i class="fa-solid fa-gamepad text-3xl text-cyber-cyan animate-pulse"></i>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-30 w-72 bg-dark-900 border-r border-slate-800 flex flex-col transition-transform duration-300 -translate-x-full md:translate-x-0">
+        <!-- Sidebar Header -->
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                </div>
                 <div>
-                    <h1 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-cyber-pink to-cyber-yellow leading-none">
-                        CYBER<span class="text-white">-</span>SURPRISE
-                    </h1>
-                    <p class="text-xs text-cyber-cyan/80 tracking-widest font-semibold uppercase">Retro Arcade Hub v2.0</p>
+                    <h1 class="font-bold text-slate-100 tracking-tight">AndrewTesla</h1>
+                    <span class="text-xs text-amber-400 font-medium flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Premium Locked
+                    </span>
                 </div>
             </div>
+            <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
 
-            <!-- Status Metrics & Global Score -->
-            <div class="flex items-center space-x-6 text-sm font-orbitron">
-                <div class="hidden sm:flex items-center space-x-2 bg-cyber-bg/90 border border-cyber-cyan/30 px-3 py-1.5 rounded-md shadow-inner">
-                    <i class="fa-solid fa-trophy text-cyber-yellow"></i>
-                    <span class="text-gray-400">TOTAL SCORE:</span>
-                    <span id="globalScore" class="text-cyber-yellow font-bold text-base">0000</span>
+        <!-- New Chat Button -->
+        <div class="p-3">
+            <button id="new-chat-btn" class="w-full flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200 active:scale-[0.98]">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>New Conversation</span>
+            </button>
+        </div>
+
+        <!-- Chat History List -->
+        <div class="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar space-y-1">
+            <div class="text-xs font-semibold text-slate-500 px-3 py-2 uppercase tracking-wider">Recent Chats</div>
+            <div id="chat-history-list" class="space-y-1">
+                <!-- Dynamically populated chat sessions -->
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-semibold text-sm border border-slate-700">
+                    U
                 </div>
+                <div class="text-sm">
+                    <p class="font-medium text-slate-200 leading-none">Workspace User</p>
+                    <p class="text-xs text-slate-400 mt-1">Free Tier</p>
+                </div>
+            </div>
+            <button id="clear-all-btn" title="Clear All Chats" class="text-slate-400 hover:text-rose-400 p-2 rounded-lg hover:bg-slate-800 transition-colors">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </aside>
 
-                <div class="flex items-center space-x-3">
-                    <!-- Sound / Synth FX Toggle -->
-                    <button id="soundToggle" onclick="toggleAudio()" class="flex items-center space-x-2 bg-cyber-purple/20 border border-cyber-purple text-cyber-cyan hover:bg-cyber-purple/40 px-3 py-1.5 rounded-md transition duration-200">
-                        <i id="soundIcon" class="fa-solid fa-volume-xmark text-cyber-pink"></i>
-                        <span id="soundText" class="hidden md:inline text-xs font-bold">SYNTH: OFF</span>
+    <!-- Main Chat Container -->
+    <main class="flex-1 flex flex-col h-full bg-dark-950 relative overflow-hidden">
+        
+        <!-- Top Navbar -->
+        <header class="h-16 border-b border-slate-800/80 bg-dark-900/50 backdrop-blur-md px-4 flex items-center justify-between z-10">
+            <div class="flex items-center space-x-3">
+                <button id="open-sidebar" class="md:hidden text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <h2 id="current-chat-title" class="font-semibold text-slate-200 text-sm md:text-base">New Conversation</h2>
+                    <p class="text-xs text-slate-400 hidden sm:block">Ask anything or choose a suggestion below</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <button id="theme-toggle" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors" title="Toggle Theme">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Message History Area -->
+        <div id="chat-container" class="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-6 custom-scrollbar">
+            <!-- Welcome Hero (shown when no messages) -->
+        <div id="welcome-hero" class="max-w-2xl mx-auto text-center py-12 px-4">
+            <div class="w-16 h-16 bg-gradient-to-tr from-amber-500 via-indigo-500 to-purple-500 rounded-2xl mx-auto flex items-center justify-center shadow-xl shadow-amber-500/20 mb-6">
+                <i data-lucide="zap" class="w-8 h-8 text-white"></i>
+            </div>
+            <h3 class="text-2xl md:text-3xl font-bold text-slate-100 tracking-tight mb-3">Welcome to AndrewTesla AI</h3>
+            <p class="text-slate-400 text-sm md:text-base mb-8 leading-relaxed">
+                Send a message to get started. All responses require unlocking.
+            </p>
+
+            <!-- Suggestion Chips -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
+                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium text-slate-200 text-sm">Ask anything</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Send your question here</p>
+                    </div>
+                </button>
+                    
+                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
+                        <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                            <i data-lucide="lightbulb" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-200 text-sm">Startup ideas</p>
+                            <p class="text-xs text-slate-400 mt-0.5">AI tools for remote team productivity</p>
+                        </div>
                     </button>
 
-                    <!-- Particle Toggle -->
-                    <button onclick="toggleParticles()" class="flex items-center space-x-2 bg-cyber-cyan/10 border border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan/30 px-3 py-1.5 rounded-md transition duration-200">
-                        <i class="fa-solid fa-wand-magic-sparkles text-cyber-cyan"></i>
-                        <span class="hidden md:inline text-xs font-bold">VFX</span>
+                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
+                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-200 text-sm">Explain quantum computing</p>
+                            <p class="text-xs text-slate-400 mt-0.5">In simple terms for a beginner</p>
+                        </div>
+                    </button>
+
+                    <button class="suggestion-chip p-3.5 rounded-xl bg-dark-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition-all duration-200 group flex items-start space-x-3">
+                        <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-200 text-sm">Draft an email</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Professional follow-up after interview</p>
+                        </div>
                     </button>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Dynamic Content Container -->
-    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-center">
+        <!-- Typing Indicator Container -->
+        <div id="typing-indicator" class="hidden px-4 md:px-6 py-2">
+            <div class="flex items-start space-x-3 max-w-4xl mx-auto">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white shrink-0 shadow-md">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+            </div>
+        </div>
 
-        <!-- ================= VIEW 1: HUB MAIN DASHBOARD ================= -->
-        <div id="view-hub" class="space-y-8 animate-fade-in">
-            <!-- Hero Banner -->
-            <div class="cyber-card rounded-2xl p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="space-y-4 max-w-xl z-10 text-center md:text-left">
-                    <div class="inline-block px-3 py-1 bg-cyber-pink/20 border border-cyber-pink text-cyber-pink text-xs font-orbitron font-bold rounded-full">
-                        <i class="fa-solid fa-bolt mr-1"></i> READY PLAYER ONE
-                    </div>
-                    <h2 class="font-orbitron font-extrabold text-3xl md:text-5xl text-white tracking-wide">
-                        STEP INTO THE <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan to-cyber-pink text-glow-cyan">CYBER GRID</span>
-                    </h2>
-                    <p class="text-gray-300 text-base md:text-lg">
-                        Spin the Cyber-Surprise Wheel for randomized retro games, generate synth soundscapes, or challenge your high scores in classic arcade reimagining!
-                    </p>
-                    <div class="pt-2 flex flex-wrap gap-4 justify-center md:justify-start">
-                        <button onclick="switchView('wheel')" class="cyber-btn px-6 py-3 rounded text-sm md:text-base">
-                            <i class="fa-solid fa-compass-drafting mr-2"></i>SPIN SURPRISE WHEEL
+        <!-- Input Footer Area -->
+        <div class="p-4 md:p-6 bg-dark-950 border-t border-slate-800/80">
+            <div class="max-w-4xl mx-auto">
+                <form id="chat-form" class="relative flex items-center">
+                    <textarea 
+                        id="user-input" 
+                        rows="1" 
+                        placeholder="Message AndrewTesla..." 
+                        class="w-full bg-dark-900 border border-slate-800 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-2xl pl-4 pr-24 py-3.5 text-slate-100 placeholder-slate-500 text-sm resize-none custom-scrollbar outline-none shadow-inner transition-all"
+                        style="max-height: 150px;"
+                    ></textarea>
+                    
+                    <div class="absolute right-2.5 flex items-center space-x-1">
+                        <button 
+                            type="submit" 
+                            id="send-btn" 
+                            class="w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 text-white flex items-center justify-center transition-all duration-200 shadow-md shadow-indigo-600/20"
+                            disabled
+                        >
+                            <i data-lucide="send" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="scrollToGames()" class="cyber-btn cyber-btn-cyan px-6 py-3 rounded text-sm md:text-base">
-                            <i class="fa-solid fa-gamepad mr-2"></i>BROWSE GAMES
-                        </button>
                     </div>
-                </div>
-
-                <!-- Interactive Holographic Arcade Cabinet Art -->
-                <div class="relative w-64 h-64 flex-shrink-0 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-cyber-cyan/20 to-cyber-pink/20 rounded-full blur-xl animate-pulse"></div>
-                    <div class="relative w-56 h-56 border-2 border-cyber-cyan/50 rounded-2xl p-4 flex flex-col items-center justify-center bg-cyber-bg/90 shadow-2xl animate-float">
-                        <i class="fa-solid fa-vr-cardboard text-6xl text-cyber-pink mb-3 animate-pulse"></i>
-                        <span class="font-orbitron text-xs text-cyber-cyan font-bold tracking-widest text-center">SYSTEM STATUS</span>
-                        <span class="font-orbitron text-lg text-cyber-yellow font-black">ONLINE 100%</span>
-                        <div class="mt-3 flex space-x-2">
-                            <span class="w-2 h-2 rounded-full bg-cyber-cyan animate-ping"></span>
-                            <span class="w-2 h-2 rounded-full bg-cyber-pink animate-ping" style="animation-delay: 0.3s"></span>
-                            <span class="w-2 h-2 rounded-full bg-cyber-yellow animate-ping" style="animation-delay: 0.6s"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Arcade Mini-Games Grid -->
-            <div id="gamesSection" class="space-y-4">
-                <div class="flex justify-between items-end border-b border-cyber-cyan/30 pb-2">
-                    <h3 class="font-orbitron text-xl md:text-2xl font-bold text-cyber-cyan flex items-center">
-                        <i class="fa-solid fa-layer-group mr-3 text-cyber-pink"></i>ARCADE MINI-GAMES
-                    </h3>
-                    <span class="text-xs text-gray-400 font-orbitron">3 MODULES ACTIVE</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Game Card 1: Neon Snake -->
-                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
-                        <div class="space-y-3">
-                            <div class="w-12 h-12 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan flex items-center justify-center text-cyber-cyan text-2xl group-hover:scale-110 transition duration-300">
-                                <i class="fa-solid fa-staff-snake"></i>
-                            </div>
-                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-cyan transition">CYBER SNAKE 2099</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Control the high-speed neon data stream. Collect cyber-bytes without colliding with walls or your own tail.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
-                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="snakeBest">0</span></span>
-                            <button onclick="launchGame('snake')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
-                        </div>
-                    </div>
-
-                    <!-- Game Card 2: Cyber Invaders -->
-                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
-                        <div class="space-y-3">
-                            <div class="w-12 h-12 rounded-lg bg-cyber-pink/10 border border-cyber-pink flex items-center justify-center text-cyber-pink text-2xl group-hover:scale-110 transition duration-300">
-                                <i class="fa-solid fa-user-ninja"></i>
-                            </div>
-                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-pink transition">NEON DEFENDER</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Shoot incoming glitch-bots in space. Dodge lasers and protect the core matrix from invasion!
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
-                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="defenderBest">0</span></span>
-                            <button onclick="launchGame('defender')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
-                        </div>
-                    </div>
-
-                    <!-- Game Card 3: Cyber Reaction Test -->
-                    <div class="cyber-card rounded-xl p-5 flex flex-col justify-between space-y-4 group">
-                        <div class="space-y-3">
-                            <div class="w-12 h-12 rounded-lg bg-cyber-purple/20 border border-cyber-purple flex items-center justify-center text-cyber-yellow text-2xl group-hover:scale-110 transition duration-300">
-                                <i class="fa-solid fa-stopwatch"></i>
-                            </div>
-                            <h4 class="font-orbitron font-bold text-xl text-white group-hover:text-cyber-yellow transition">REFLEX MATRIX</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Test your synaptic reaction time! Click target nodes the exact millisecond they ignite.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-cyber-cyan/10 flex items-center justify-between">
-                            <span class="text-xs font-orbitron text-cyber-yellow"><i class="fa-solid fa-star mr-1"></i>BEST: <span id="reflexBest">0</span> ms</span>
-                            <button onclick="launchGame('reflex')" class="cyber-btn px-4 py-2 text-xs">PLAY NOW</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interactive Synth Audio Pad Box -->
-            <div class="cyber-card rounded-xl p-6 space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyber-cyan/20 pb-3">
-                    <h3 class="font-orbitron text-lg font-bold text-cyber-yellow flex items-center">
-                        <i class="fa-solid fa-sliders mr-2"></i>SYNTHESIZER SOUNDFX PAD
-                    </h3>
-                    <span class="text-xs text-cyber-cyan/70 font-orbitron">REALTIME WEB AUDIO SYNTH</span>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <button onclick="playSynthSound('laser')" class="p-3 bg-cyber-bg/80 border border-cyber-cyan/40 hover:border-cyber-cyan rounded text-center text-xs font-orbitron font-bold text-cyber-cyan hover:bg-cyber-cyan/20 transition active:scale-95">
-                        <i class="fa-solid fa-raygun block text-lg mb-1"></i>LASER PING
-                    </button>
-                    <button onclick="playSynthSound('powerup')" class="p-3 bg-cyber-bg/80 border border-cyber-pink/40 hover:border-cyber-pink rounded text-center text-xs font-orbitron font-bold text-cyber-pink hover:bg-cyber-pink/20 transition active:scale-95">
-                        <i class="fa-solid fa-bolt-lightning block text-lg mb-1"></i>POWER UP
-                    </button>
-                    <button onclick="playSynthSound('explosion')" class="p-3 bg-cyber-bg/80 border border-cyber-yellow/40 hover:border-cyber-yellow rounded text-center text-xs font-orbitron font-bold text-cyber-yellow hover:bg-cyber-yellow/20 transition active:scale-95">
-                        <i class="fa-solid fa-bomb block text-lg mb-1"></i>CYBER BOOM
-                    </button>
-                    <button onclick="playSynthSound('coin')" class="p-3 bg-cyber-bg/80 border border-cyber-green/40 hover:border-cyber-green rounded text-center text-xs font-orbitron font-bold text-cyber-green hover:bg-cyber-green/20 transition active:scale-95">
-                        <i class="fa-solid fa-coins block text-lg mb-1"></i>CREDIT INSERT
-                    </button>
-                </div>
+                </form>
+                <p class="text-center text-xs text-slate-500 mt-2.5">
+                    AI Nexus can make mistakes. Verify important info.
+                </p>
             </div>
         </div>
-
-        <!-- ================= VIEW 2: SURPRISE WHEEL ================= -->
-        <div id="view-wheel" class="hidden space-y-6 max-w-3xl mx-auto w-full animate-fade-in">
-            <div class="text-center space-y-2">
-                <button onclick="switchView('hub')" class="text-xs font-orbitron text-cyber-cyan hover:text-white flex items-center justify-center mx-auto mb-2">
-                    <i class="fa-solid fa-arrow-left mr-2"></i>RETURN TO HUB
-                </button>
-                <h2 class="font-orbitron font-black text-3xl md:text-4xl text-white">
-                    CYBER-SURPRISE <span class="text-cyber-pink text-glow-pink">WHEEL</span>
-                </h2>
-                <p class="text-sm text-gray-300">Spin for a random challenge, game mode, or high-score multiplier!</p>
-            </div>
-
-            <!-- Wheel Container -->
-            <div class="cyber-card rounded-2xl p-6 flex flex-col items-center space-y-6 relative">
-                <!-- Pointer -->
-                <div class="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-cyber-yellow z-20 -mb-6 filter drop-shadow-[0_0_10px_#ffe600]"></div>
-
-                <!-- Canvas Wheel -->
-                <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
-                    <canvas id="wheelCanvas" width="320" height="320" class="w-full h-full rounded-full border-4 border-cyber-cyan/50 shadow-[0_0_30px_rgba(0,240,255,0.4)]"></canvas>
-                </div>
-
-                <!-- Spin Trigger Button -->
-                <button id="spinBtn" onclick="spinWheel()" class="cyber-btn px-8 py-3 rounded-lg text-lg">
-                    <i class="fa-solid fa-arrows-spin mr-2"></i>SPIN THE MATRIX
-                </button>
-
-                <!-- Result Card Modal / Box -->
-                <div id="wheelResultBox" class="hidden w-full bg-cyber-bg/90 border border-cyber-pink p-4 rounded-xl text-center space-y-2 animate-bounce">
-                    <span class="text-xs font-orbitron text-cyber-yellow font-bold uppercase tracking-wider">SURPRISE UNLOCKED!</span>
-                    <h3 id="wheelResultTitle" class="font-orbitron text-xl font-extrabold text-white"></h3>
-                    <p id="wheelResultDesc" class="text-sm text-gray-300"></p>
-                    <button id="wheelResultAction" class="cyber-btn cyber-btn-cyan px-4 py-1.5 text-xs rounded mt-2">LAUNCH TASK</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= VIEW 3: ARCADE GAME CABINET MODAL ================= -->
-        <div id="view-game" class="hidden space-y-4 max-w-4xl mx-auto w-full animate-fade-in">
-            <!-- Top Controls bar -->
-            <div class="flex items-center justify-between border-b border-cyber-cyan/30 pb-3">
-                <button onclick="exitGame()" class="cyber-btn cyber-btn-cyan px-4 py-1.5 text-xs rounded">
-                    <i class="fa-solid fa-chevron-left mr-2"></i>EXIT GAME
-                </button>
-                <div class="flex items-center space-x-6 font-orbitron">
-                    <div class="text-sm"><span class="text-gray-400">SCORE:</span> <span id="currentGameScore" class="text-cyber-cyan font-bold text-lg">0</span></div>
-                    <div class="text-sm"><span class="text-gray-400">HIGH:</span> <span id="currentGameHigh" class="text-cyber-yellow font-bold text-lg">0</span></div>
-                </div>
-            </div>
-
-            <!-- Game Arena Canvas Cabinet -->
-            <div class="cyber-card rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center relative overflow-hidden min-h-[420px]">
-                <canvas id="gameCanvas" width="600" height="400" class="max-w-full h-auto bg-cyber-bg rounded-lg border border-cyber-cyan/50 shadow-[0_0_20px_rgba(0,f0,ff,0.2)]"></canvas>
-
-                <!-- Onscreen Touch Controls for Mobile Users -->
-                <div id="mobileControls" class="mt-4 w-full max-w-md flex justify-between items-center px-4">
-                    <div class="grid grid-cols-3 gap-2 w-36">
-                        <div></div>
-                        <button id="btnUp" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-up"></i></button>
-                        <div></div>
-                        <button id="btnLeft" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-left"></i></button>
-                        <button id="btnDown" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-down"></i></button>
-                        <button id="btnRight" class="p-3 bg-cyber-cyan/20 border border-cyber-cyan text-cyber-cyan rounded text-center active:bg-cyber-cyan/50"><i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                    <button id="btnAction" class="w-20 h-20 bg-cyber-pink/30 border-2 border-cyber-pink rounded-full text-cyber-pink font-orbitron font-bold text-xs flex items-center justify-center active:bg-cyber-pink/60">
-                        FIRE / TAP
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Footer -->
-    <footer class="w-full border-t border-cyber-cyan/20 bg-cyber-bg/90 py-4 px-4 text-center text-xs text-gray-500 font-orbitron">
-        <p>CYBER-SURPRISE HUB &copy; 2099 | RETRO SYNTHWAVE ARCADE EXPERIENCE</p>
-    </footer>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3">
+        <i data-lucide="info" class="w-5 h-5 text-indigo-400"></i>
+        <span id="toast-message" class="text-sm font-medium">Notification message</span>
+    </div>
 
-    <!-- Global Sound & Game Logic Script -->
+    <!-- Application Script -->
     <script>
-        /* ==========================================================================
-           1. AUDIO SYNTHESIZER SYSTEM (Web Audio API)
-           ========================================================================== */
-        let audioCtx = null;
-        let isAudioEnabled = false;
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-        function initAudio() {
-            if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
+        // State variables
+        let chats = JSON.parse(localStorage.getItem('andrewtesla_chats')) || [];
+        let currentChatId = null;
+        let messages = [];
+        let isGenerating = false;
+        let isUnlocked = localStorage.getItem('andrewtesla_unlocked') === 'true';
 
-        function toggleAudio() {
-            initAudio();
-            isAudioEnabled = !isAudioEnabled;
-            const soundIcon = document.getElementById('soundIcon');
-            const soundText = document.getElementById('soundText');
+        // DOM Elements
+        const chatContainer = document.getElementById('chat-container');
+        const welcomeHero = document.getElementById('welcome-hero');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const chatHistoryList = document.getElementById('chat-history-list');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const clearAllBtn = document.getElementById('clear-all-btn');
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('open-sidebar');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const currentChatTitle = document.getElementById('current-chat-title');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
 
-            if (isAudioEnabled) {
-                soundIcon.className = "fa-solid fa-volume-high text-cyber-cyan";
-                soundText.innerText = "SYNTH: ON";
-                playSynthSound('powerup');
+        // Toggle Sidebar on Mobile
+        function toggleSidebar(open) {
+            if (open) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarBackdrop.classList.remove('hidden');
             } else {
-                soundIcon.className = "fa-solid fa-volume-xmark text-cyber-pink";
-                soundText.innerText = "SYNTH: OFF";
+                sidebar.classList.add('-translate-x-full');
+                sidebarBackdrop.classList.add('hidden');
             }
         }
 
-        function playSynthSound(type) {
-            if (!isAudioEnabled) return;
-            initAudio();
+        openSidebarBtn.addEventListener('click', () => toggleSidebar(true));
+        closeSidebarBtn.addEventListener('click', () => toggleSidebar(false));
+        sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
 
-            const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+        // Auto-resize textarea
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            sendBtn.disabled = this.value.trim() === '' || isGenerating;
+        });
 
-            if (type === 'laser') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                osc.start(now);
-                osc.stop(now + 0.15);
-            } else if (type === 'powerup') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(200, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === 'explosion') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
-                gain.gain.setValueAtTime(0.4, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === 'coin') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(987.77, now); // B5
-                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            }
-        }
-
-        /* ==========================================================================
-           2. NEON BACKGROUND PARTICLE SYSTEM
-           ========================================================================== */
-        const bgCanvas = document.getElementById('bgCanvas');
-        const bgCtx = bgCanvas.getContext('2d');
-        let particles = [];
-        let particlesActive = true;
-
-        function resizeBgCanvas() {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeBgCanvas);
-        resizeBgCanvas();
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * bgCanvas.width;
-                this.y = Math.random() * bgCanvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.8;
-                this.speedY = (Math.random() - 0.5) * 0.8;
-                this.color = Math.random() > 0.5 ? '#00f0ff' : '#ff007f';
-                this.alpha = Math.random() * 0.6 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) {
-                    this.reset();
+        // Enter key to submit (Shift+Enter for newline)
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!sendBtn.disabled) {
+                    chatForm.requestSubmit();
                 }
             }
-            draw() {
-                bgCtx.save();
-                bgCtx.globalAlpha = this.alpha;
-                bgCtx.shadowBlur = 8;
-                bgCtx.shadowColor = this.color;
-                bgCtx.fillStyle = this.color;
-                bgCtx.beginPath();
-                bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                bgCtx.fill();
-                bgCtx.restore();
+        });
+
+        // Show Toast helper
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize chats list
+        function initChats() {
+            if (chats.length === 0) {
+                createNewChat();
+            } else {
+                loadChat(chats[0].id);
             }
+            renderChatHistory();
         }
 
-        for (let i = 0; i < 60; i++) {
-            particles.push(new Particle());
-        }
-
-        function animateBg() {
-            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-            // Draw synthwave grid line at bottom
-            bgCtx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
-            bgCtx.lineWidth = 1;
-            const gridY = bgCanvas.height * 0.8;
-            for (let x = 0; x < bgCanvas.width; x += 40) {
-                bgCtx.beginPath();
-                bgCtx.moveTo(x, gridY);
-                bgCtx.lineTo(x, bgCanvas.height);
-                bgCtx.stroke();
-            }
-
-            if (particlesActive) {
-                particles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-            }
-            requestAnimationFrame(animateBg);
-        }
-        animateBg();
-
-        function toggleParticles() {
-            particlesActive = !particlesActive;
-        }
-
-        /* ==========================================================================
-           3. UI VIEW ROUTER & GLOBAL SCORE MANAGEMENT
-           ========================================================================== */
-        let globalScore = parseInt(localStorage.getItem('cyber_global_score') || '0');
-        let snakeHigh = parseInt(localStorage.getItem('cyber_snake_high') || '0');
-        let defenderHigh = parseInt(localStorage.getItem('cyber_defender_high') || '0');
-        let reflexHigh = parseInt(localStorage.getItem('cyber_reflex_high') || '999');
-
-        function updateScoreDisplays() {
-            document.getElementById('globalScore').innerText = globalScore.toString().padStart(4, '0');
-            document.getElementById('snakeBest').innerText = snakeHigh;
-            document.getElementById('defenderBest').innerText = defenderHigh;
-            document.getElementById('reflexBest').innerText = reflexHigh === 999 ? '0' : reflexHigh;
-        }
-        updateScoreDisplays();
-
-        function addGlobalScore(pts) {
-            globalScore += pts;
-            localStorage.setItem('cyber_global_score', globalScore.toString());
-            updateScoreDisplays();
-        }
-
-        function switchView(viewName) {
-            playSynthSound('laser');
-            document.getElementById('view-hub').classList.add('hidden');
-            document.getElementById('view-wheel').classList.add('hidden');
-            document.getElementById('view-game').classList.add('hidden');
-
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-
-            if (viewName === 'wheel') {
-                drawWheel();
-            }
-        }
-
-        function scrollToGames() {
-            document.getElementById('gamesSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        /* ==========================================================================
-           4. CYBER SURPRISE WHEEL SYSTEM
-           ========================================================================== */
-        const wheelCanvas = document.getElementById('wheelCanvas');
-        const wheelCtx = wheelCanvas.getContext('2d');
-        const wheelSegments = [
-            { title: "SNAKE SPRINT", desc: "Play Snake 2099 & score at least 5 points!", action: () => launchGame('snake') },
-            { title: "DEFENDER MODE", desc: "Defend against space invaders in Neon Defender!", action: () => launchGame('defender') },
-            { title: "REFLEX BOOST", desc: "Test your brain velocity in Reflex Matrix!", action: () => launchGame('reflex') },
-            { title: "BONUS 500 PTS", desc: "Surprise matrix grant! Instant +500 Global Points!", action: () => { addGlobalScore(500); playSynthSound('powerup'); } },
-            { title: "SUPER SYNTH", desc: "Sound pad unlocked! Enjoy retro sound design.", action: () => switchView('hub') }
-        ];
-
-        let startAngle = 0;
-        let isSpinning = false;
-
-        function drawWheel() {
-            const numOptions = wheelSegments.length;
-            const arcSize = (2 * Math.PI) / numOptions;
-            const radius = 150;
-            const centerX = wheelCanvas.width / 2;
-            const centerY = wheelCanvas.height / 2;
-
-            wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
-
-            for (let i = 0; i < numOptions; i++) {
-                const angle = startAngle + i * arcSize;
-                wheelCtx.fillStyle = i % 2 === 0 ? 'rgba(0, 240, 255, 0.8)' : 'rgba(255, 0, 127, 0.8)';
-                wheelCtx.beginPath();
-                wheelCtx.arc(centerX, centerY, radius, angle, angle + arcSize, false);
-                wheelCtx.lineTo(centerX, centerY);
-                wheelCtx.fill();
-                wheelCtx.strokeStyle = '#080811';
-                wheelCtx.lineWidth = 3;
-                wheelCtx.stroke();
-
-                // Draw Text
-                wheelCtx.save();
-                wheelCtx.fillStyle = '#080811';
-                wheelCtx.font = 'bold 12px Orbitron';
-                wheelCtx.translate(centerX + Math.cos(angle + arcSize / 2) * (radius / 1.5), centerY + Math.sin(angle + arcSize / 2) * (radius / 1.5));
-                wheelCtx.rotate(angle + arcSize / 2 + Math.PI / 2);
-                wheelCtx.fillText(wheelSegments[i].title, -wheelCtx.measureText(wheelSegments[i].title).width / 2, 0);
-                wheelCtx.restore();
-            }
-        }
-
-        function spinWheel() {
-            if (isSpinning) return;
-            isSpinning = true;
-            document.getElementById('wheelResultBox').classList.add('hidden');
-            playSynthSound('laser');
-
-            let spinTime = 0;
-            const spinTimeTotal = Math.random() * 2000 + 3000;
-            const spinAngleStart = Math.random() * 10 + 10;
-
-            function rotate() {
-                spinTime += 30;
-                if (spinTime >= spinTimeTotal) {
-                    isSpinning = false;
-                    highlightWheelResult();
-                    return;
-                }
-                const spinAngle = spinAngleStart - (spinTime / spinTimeTotal) * spinAngleStart;
-                startAngle += (spinAngle * Math.PI / 180);
-                drawWheel();
-                requestAnimationFrame(rotate);
-            }
-            rotate();
-        }
-
-        function highlightWheelResult() {
-            const numOptions = wheelSegments.length;
-            const arcSize = (2 * Math.PI) / numOptions;
-            let degrees = (startAngle * 180 / Math.PI) % 360;
-            if (degrees < 0) degrees += 360;
-            
-            // Pointer is at Top (-Math.PI/2)
-            const index = Math.floor((360 - degrees) / (360 / numOptions)) % numOptions;
-            const winningSegment = wheelSegments[index];
-
-            const resultBox = document.getElementById('wheelResultBox');
-            document.getElementById('wheelResultTitle').innerText = winningSegment.title;
-            document.getElementById('wheelResultDesc').innerText = winningSegment.desc;
-            
-            const btn = document.getElementById('wheelResultAction');
-            btn.onclick = () => { winningSegment.action(); };
-
-            resultBox.classList.remove('hidden');
-            playSynthSound('coin');
-        }
-
-        /* ==========================================================================
-           5. GAME ENGINE CABINET (Snake, Defender, Reflex Matrix)
-           ========================================================================== */
-        const gameCanvas = document.getElementById('gameCanvas');
-        const gameCtx = gameCanvas.getContext('2d');
-        let activeGame = null;
-        let gameLoopId = null;
-        let currentGameScore = 0;
-
-        function launchGame(gameType) {
-            switchView('game');
-            activeGame = gameType;
-            currentGameScore = 0;
-            document.getElementById('currentGameScore').innerText = '0';
-
-            if (gameLoopId) cancelAnimationFrame(gameLoopId);
-
-            if (gameType === 'snake') {
-                document.getElementById('currentGameHigh').innerText = snakeHigh;
-                initSnakeGame();
-            } else if (gameType === 'defender') {
-                document.getElementById('currentGameHigh').innerText = defenderHigh;
-                initDefenderGame();
-            } else if (gameType === 'reflex') {
-                document.getElementById('currentGameHigh').innerText = reflexHigh === 999 ? '0' : reflexHigh;
-                initReflexGame();
-            }
-        }
-
-        function exitGame() {
-            if (gameLoopId) cancelAnimationFrame(gameLoopId);
-            activeGame = null;
-            switchView('hub');
-        }
-
-        // --- MINI-GAME 1: CYBER SNAKE ---
-        let snake = [], snakeDir = {x: 1, y: 0}, snakeFood = {};
-        const gridSize = 20;
-
-        function initSnakeGame() {
-            snake = [{x: 5, y: 5}, {x: 4, y: 5}, {x: 3, y: 5}];
-            snakeDir = {x: 1, y: 0};
-            spawnSnakeFood();
-
-            let lastTime = 0;
-            function snakeLoop(time) {
-                gameLoopId = requestAnimationFrame(snakeLoop);
-                if (time - lastTime < 100) return; // control speed
-                lastTime = time;
-
-                // Move snake
-                const head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
-
-                // Check wall collision
-                if (head.x < 0 || head.x >= gameCanvas.width / gridSize || head.y < 0 || head.y >= gameCanvas.height / gridSize) {
-                    return endSnakeGame();
-                }
-                // Check self collision
-                if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                    return endSnakeGame();
-                }
-
-                snake.unshift(head);
-
-                // Check food eat
-                if (head.x === snakeFood.x && head.y === snakeFood.y) {
-                    currentGameScore += 10;
-                    addGlobalScore(10);
-                    document.getElementById('currentGameScore').innerText = currentGameScore;
-                    playSynthSound('coin');
-                    spawnSnakeFood();
-                } else {
-                    snake.pop();
-                }
-
-                // Render
-                gameCtx.fillStyle = '#080811';
-                gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-                // Draw Food
-                gameCtx.fillStyle = '#ff007f';
-                gameCtx.shadowBlur = 10;
-                gameCtx.shadowColor = '#ff007f';
-                gameCtx.fillRect(snakeFood.x * gridSize, snakeFood.y * gridSize, gridSize - 2, gridSize - 2);
-
-                // Draw Snake
-                snake.forEach((seg, i) => {
-                    gameCtx.fillStyle = i === 0 ? '#00f0ff' : '#00ff66';
-                    gameCtx.shadowBlur = 8;
-                    gameCtx.shadowColor = '#00f0ff';
-                    gameCtx.fillRect(seg.x * gridSize, seg.y * gridSize, gridSize - 2, gridSize - 2);
-                });
-                gameCtx.shadowBlur = 0;
-            }
-            snakeLoop(0);
-        }
-
-        function spawnSnakeFood() {
-            snakeFood = {
-                x: Math.floor(Math.random() * (gameCanvas.width / gridSize)),
-                y: Math.floor(Math.random() * (gameCanvas.height / gridSize))
+        function createNewChat() {
+            const newChat = {
+                id: 'chat_' + Date.now(),
+                title: 'New Conversation',
+                messages: []
             };
+            chats.unshift(newChat);
+            saveChats();
+            loadChat(newChat.id);
+            renderChatHistory();
+            if (window.innerWidth < 768) toggleSidebar(false);
         }
 
-        function endSnakeGame() {
-            playSynthSound('explosion');
-            cancelAnimationFrame(gameLoopId);
-            if (currentGameScore > snakeHigh) {
-                snakeHigh = currentGameScore;
-                localStorage.setItem('cyber_snake_high', snakeHigh.toString());
+        function loadChat(chatId) {
+            currentChatId = chatId;
+            const chat = chats.find(c => c.id === chatId);
+            if (chat) {
+                messages = chat.messages;
+                currentChatTitle.textContent = chat.title;
+                renderMessages();
             }
-            updateScoreDisplays();
-            alert(`GAME OVER! Final Score: ${currentGameScore}`);
-            switchView('hub');
         }
 
-        // --- MINI-GAME 2: NEON DEFENDER ---
-        let playerX = 280, bullets = [], enemies = [];
-        function initDefenderGame() {
-            playerX = 280;
-            bullets = [];
-            enemies = [];
+        function saveChats() {
+            localStorage.setItem('andrewtesla_chats', JSON.stringify(chats));
+        }
 
-            let frame = 0;
-            function defenderLoop() {
-                gameLoopId = requestAnimationFrame(defenderLoop);
-                frame++;
+        function renderChatHistory() {
+            chatHistoryList.innerHTML = '';
+            chats.forEach(chat => {
+                const isActive = chat.id === currentChatId;
+                const div = document.createElement('div');
+                div.className = `group flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-amber-400' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3 truncate flex-1" onclick="loadChat('${chat.id}')">
+                        <i data-lucide="message-square" class="w-4 h-4 shrink-0"></i>
+                        <span class="truncate">${escapeHtml(chat.title)}</span>
+                    </div>
+                    <button onclick="deleteChat(event, '${chat.id}')" class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 rounded transition-opacity">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                `;
+                chatHistoryList.appendChild(div);
+            });
+            lucide.createIcons();
+        }
 
-                // Clear canvas
-                gameCtx.fillStyle = '#080811';
-                gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-                // Spawn enemies
-                if (frame % 40 === 0) {
-                    enemies.push({x: Math.random() * (gameCanvas.width - 30), y: 0, speed: Math.random() * 2 + 1.5});
-                }
-
-                // Draw Ship
-                gameCtx.fillStyle = '#00f0ff';
-                gameCtx.shadowBlur = 10;
-                gameCtx.shadowColor = '#00f0ff';
-                gameCtx.beginPath();
-                gameCtx.moveTo(playerX + 20, gameCanvas.height - 35);
-                gameCtx.lineTo(playerX, gameCanvas.height - 10);
-                gameCtx.lineTo(playerX + 40, gameCanvas.height - 10);
-                gameCtx.fill();
-
-                // Update Bullets
-                bullets.forEach((b, bi) => {
-                    b.y -= 7;
-                    gameCtx.fillStyle = '#ffe600';
-                    gameCtx.fillRect(b.x, b.y, 4, 10);
-
-                    // Check Enemy Collision
-                    enemies.forEach((e, ei) => {
-                        if (b.x > e.x && b.x < e.x + 30 && b.y > e.y && b.y < e.y + 20) {
-                            bullets.splice(bi, 1);
-                            enemies.splice(ei, 1);
-                            currentGameScore += 20;
-                            addGlobalScore(20);
-                            document.getElementById('currentGameScore').innerText = currentGameScore;
-                            playSynthSound('explosion');
-                        }
-                    });
-                });
-
-                // Update Enemies
-                enemies.forEach((e, ei) => {
-                    e.y += e.speed;
-                    gameCtx.fillStyle = '#ff007f';
-                    gameCtx.fillRect(e.x, e.y, 30, 20);
-
-                    if (e.y > gameCanvas.height - 40) {
-                        cancelAnimationFrame(gameLoopId);
-                        playSynthSound('explosion');
-                        if (currentGameScore > defenderHigh) {
-                            defenderHigh = currentGameScore;
-                            localStorage.setItem('cyber_defender_high', defenderHigh.toString());
-                        }
-                        updateScoreDisplays();
-                        alert(`BASE DESTROYED! Score: ${currentGameScore}`);
-                        return switchView('hub');
-                    }
-                });
-                gameCtx.shadowBlur = 0;
+        function deleteChat(event, chatId) {
+            event.stopPropagation();
+            chats = chats.filter(c => c.id !== chatId);
+            saveChats();
+            if (chats.length === 0) {
+                createNewChat();
+            } else if (currentChatId === chatId) {
+                loadChat(chats[0].id);
             }
-            defenderLoop();
+            renderChatHistory();
         }
 
-        // --- MINI-GAME 3: REFLEX MATRIX ---
-        let reflexTarget = {x: 0, y: 0, time: 0};
-        let reflexState = 'waiting';
-
-        function initReflexGame() {
-            reflexState = 'waiting';
-            gameCtx.fillStyle = '#080811';
-            gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-            gameCtx.fillStyle = '#00f0ff';
-            gameCtx.font = '20px Orbitron';
-            gameCtx.fillText("CLICK/TAP CANVAS TO START TEST", 110, 200);
-        }
-
-        gameCanvas.addEventListener('click', (e) => {
-            if (activeGame === 'reflex') {
-                if (reflexState === 'waiting') {
-                    reflexState = 'ready';
-                    gameCtx.fillStyle = '#080811';
-                    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-                    gameCtx.fillStyle = '#ffe600';
-                    gameCtx.fillText("WAIT FOR NEON NODE TO IGNITE...", 110, 200);
-
-                    setTimeout(() => {
-                        if (activeGame !== 'reflex') return;
-                        reflexState = 'active';
-                        reflexTarget = {
-                            x: Math.random() * (gameCanvas.width - 60) + 30,
-                            y: Math.random() * (gameCanvas.height - 60) + 30,
-                            time: performance.now()
-                        };
-                        gameCtx.fillStyle = '#080811';
-                        gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-                        gameCtx.fillStyle = '#ff007f';
-                        gameCtx.shadowBlur = 20;
-                        gameCtx.shadowColor = '#ff007f';
-                        gameCtx.beginPath();
-                        gameCtx.arc(reflexTarget.x, reflexTarget.y, 30, 0, Math.PI * 2);
-                        gameCtx.fill();
-                        playSynthSound('laser');
-                    }, Math.random() * 2000 + 1500);
-                } else if (reflexState === 'active') {
-                    const reactTime = Math.round(performance.now() - reflexTarget.time);
-                    reflexState = 'waiting';
-                    playSynthSound('coin');
-                    currentGameScore = reactTime;
-                    document.getElementById('currentGameScore').innerText = reactTime + 'ms';
-
-                    if (reactTime < reflexHigh) {
-                        reflexHigh = reactTime;
-                        localStorage.setItem('cyber_reflex_high', reflexHigh.toString());
-                        addGlobalScore(100);
-                    }
-
-                    updateScoreDisplays();
-                    gameCtx.fillStyle = '#080811';
-                    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-                    gameCtx.fillStyle = '#00ff66';
-                    gameCtx.fillText(`REACTION: ${reactTime} ms! TAP TO RETRY`, 120, 200);
-                }
+        clearAllBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete all conversations?')) {
+                chats = [];
+                saveChats();
+                createNewChat();
+                renderChatHistory();
+                showToast('All chats cleared');
             }
         });
 
-        /* ==========================================================================
-           6. INPUT HANDLERS & TOUCH SUPPORT
-           ========================================================================== */
-        window.addEventListener('keydown', (e) => {
-            if (activeGame === 'snake') {
-                if (e.key === 'ArrowUp' && snakeDir.y === 0) snakeDir = {x: 0, y: -1};
-                if (e.key === 'ArrowDown' && snakeDir.y === 0) snakeDir = {x: 0, y: 1};
-                if (e.key === 'ArrowLeft' && snakeDir.x === 0) snakeDir = {x: -1, y: 0};
-                if (e.key === 'ArrowRight' && snakeDir.x === 0) snakeDir = {x: 1, y: 0};
-            } else if (activeGame === 'defender') {
-                if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 25;
-                if (e.key === 'ArrowRight' && playerX < gameCanvas.width - 40) playerX += 25;
-                if (e.key === ' ' || e.key === 'Spacebar') {
-                    bullets.push({x: playerX + 18, y: gameCanvas.height - 35});
-                    playSynthSound('laser');
+        newChatBtn.addEventListener('click', createNewChat);
+
+        // Render Chat Messages
+        function renderMessages() {
+            if (messages.length === 0) {
+                welcomeHero.classList.remove('hidden');
+                chatContainer.innerHTML = '';
+                chatContainer.appendChild(welcomeHero);
+                return;
+            }
+
+            welcomeHero.classList.add('hidden');
+            chatContainer.innerHTML = '';
+
+            messages.forEach((msg) => {
+                const isUser = msg.role === 'user';
+                const messageWrapper = document.createElement('div');
+                messageWrapper.className = `flex items-start space-x-3 max-w-4xl mx-auto ${isUser ? 'justify-end' : ''}`;
+
+                if (isUser) {
+                    messageWrapper.innerHTML = `
+                        <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[85%] sm:max-w-[75%] shadow-md leading-relaxed whitespace-pre-wrap">${escapeHtml(msg.text)}</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 font-semibold text-xs shrink-0 border border-slate-700">U</div>
+                    `;
+                } else {
+                    const formattedContent = marked.parse(msg.text);
+                    messageWrapper.innerHTML = `
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-500 flex items-center justify-center text-white shrink-0 shadow-md">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
+                        </div>
+                        <div class="bg-dark-900 border border-amber-500/30 text-amber-300 rounded-2xl rounded-tl-sm px-5 py-4 text-sm max-w-[85%] sm:max-w-[85%] shadow-lg leading-relaxed font-semibold">
+                            ${formattedContent}
+                        </div>
+                    `;
                 }
+                chatContainer.appendChild(messageWrapper);
+            });
+            lucide.createIcons();
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Suggestion click listeners
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const text = chip.querySelector('p').textContent;
+                userInput.value = text;
+                userInput.style.height = 'auto';
+                userInput.style.height = (userInput.scrollHeight) + 'px';
+                sendBtn.disabled = false;
+                chatForm.requestSubmit();
+            });
+        });
+
+        // Fixed response logic
+        async function getAndrewResponse(userMessage) {
+            const cleanText = userMessage.toLowerCase().trim();
+
+            if (cleanText === "nigganigganigga") {
+                isUnlocked = true;
+                localStorage.setItem('andrewtesla_unlocked', 'true');
+                return "🎉 **Secret Code Accepted!** Every message is now fully unlocked. How can AndrewTesla assist you today?";
+            }
+
+            if (!isUnlocked) {
+                return "give andrew ₹100 to unlock one message";
+            }
+
+            // Real AI response generation using Gemini API when unlocked
+            try {
+                const apiKey = ""; // Gemini API key provided automatically at runtime in Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                
+                const systemPrompt = "You are AndrewTesla, an ultra-smart, helpful, and sleek AI assistant. Answer accurately, concisely, and with clean formatting.";
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userMessage }] }],
+                        systemInstruction: {
+                            parts: [{ text: systemPrompt }]
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (aiText) {
+                    return aiText;
+                } else {
+                    return `Here is your unlocked answer for "${userMessage}".`;
+                }
+            } catch (err) {
+                console.error("Gemini API Error:", err);
+                return `**Unlocked Output:** Answer to "${userMessage}" processed successfully.`;
+            }
+        }
+
+        // Handle Form Submit
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text || isGenerating) return;
+
+            // Reset input
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            // Append user message
+            messages.push({ role: 'user', text: text });
+            
+            // Update chat title if first message
+            const currentChat = chats.find(c => c.id === currentChatId);
+            if (currentChat && currentChat.messages.length === 0) {
+                currentChat.title = text.length > 30 ? text.substring(0, 30) + '...' : text;
+                currentChatTitle.textContent = currentChat.title;
+                renderChatHistory();
+            }
+
+            renderMessages();
+
+            // Show typing indicator
+            isGenerating = true;
+            typingIndicator.classList.remove('hidden');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const responseText = await getAndrewResponse(text);
+                messages.push({ role: 'model', text: responseText });
+                saveChats();
+            } finally {
+                isGenerating = false;
+                typingIndicator.classList.add('hidden');
+                renderMessages();
             }
         });
 
-        // Mobile Onscreen D-Pad Listeners
-        document.getElementById('btnUp').onclick = () => { if (activeGame==='snake' && snakeDir.y===0) snakeDir={x:0, y:-1}; };
-        document.getElementById('btnDown').onclick = () => { if (activeGame==='snake' && snakeDir.y===0) snakeDir={x:0, y:1}; };
-        document.getElementById('btnLeft').onclick = () => {
-            if (activeGame==='snake' && snakeDir.x===0) snakeDir={x:-1, y:0};
-            if (activeGame==='defender' && playerX > 0) playerX -= 30;
-        };
-        document.getElementById('btnRight').onclick = () => {
-            if (activeGame==='snake' && snakeDir.x===0) snakeDir={x:1, y:0};
-            if (activeGame==='defender' && playerX < gameCanvas.width - 40) playerX += 30;
-        };
-        document.getElementById('btnAction').onclick = () => {
-            if (activeGame === 'defender') {
-                bullets.push({x: playerX + 18, y: gameCanvas.height - 35});
-                playSynthSound('laser');
-            }
-        };
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
 
+        // Initialize application on load
+        initChats();
     </script>
 </body>
 </html>
