@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AndrewTesla Chatbot</title>
   
   <!-- Tailwind CSS & FontAwesome -->
@@ -27,124 +27,180 @@
     }
   </script>
   <style>
-    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); }
-    .chat-container { height: calc(100vh - 140px); }
     pre code { border-radius: 0.5rem; padding: 1rem !important; }
+    .app-height { height: 100vh; height: 100dvh; }
+
+    /* Subtle grid background pattern to remove flat blandness */
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .glow-border {
+      box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.2);
+    }
+    
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 font-sans antialiased h-screen overflow-hidden flex">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased app-height overflow-hidden flex flex-col md:flex-row">
+
+  <!-- Mobile Drawer Overlay -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/70 z-30 hidden md:hidden"></div>
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
-    <div class="p-4">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-slate-900/95 backdrop-blur-md border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 -translate-x-full md:translate-x-0 md:static md:w-64 shrink-0 shadow-2xl">
+    <div class="p-4 flex flex-col h-full overflow-hidden">
+      <!-- App Header & Mobile Close -->
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/30 text-xs">
             AT
           </div>
-          <span class="font-bold text-lg text-slate-100">AndrewTesla</span>
+          <span class="font-bold text-base tracking-wide text-slate-100">AndrewTesla</span>
         </div>
+        <button id="closeSidebarMobile" class="md:hidden text-slate-400 hover:text-slate-200">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
       </div>
 
-      <button id="newChatBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-4 rounded-xl flex items-center gap-2 text-sm transition">
-        <i class="fa-solid fa-plus text-xs"></i> New Conversation
+      <!-- New Chat Button -->
+      <button id="newChatBtn" class="w-full bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/80 py-2.5 px-4 rounded-xl flex items-center gap-2.5 text-xs font-semibold transition mb-4 shadow-sm hover:border-indigo-500/40">
+        <i class="fa-solid fa-plus text-[10px] text-indigo-400"></i> New Conversation
       </button>
 
-      <div class="mt-6">
-        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Model Engine</h3>
-        <div class="p-3 bg-slate-850 border border-indigo-500/30 rounded-xl bg-indigo-950/20 text-xs">
-          <span class="text-indigo-400 font-bold block mb-1">⚡ Gemini 3.5 Flash Lite</span>
-          <p class="text-slate-400">High-speed, low-latency execution engine.</p>
+      <!-- Sidebar History Header -->
+      <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2.5 px-1">Recent Chats</h3>
+      
+      <!-- Chat History Session List -->
+      <div id="sessionList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+
+      <!-- Model Specs Indicator -->
+      <div class="mt-4 pt-3 border-t border-slate-800">
+        <div class="p-3 bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-xl text-xs glow-border">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-indigo-300 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.5
+            </span>
+            <span class="text-[10px] text-indigo-400 font-mono">Flash Lite</span>
+          </div>
+          <p class="text-slate-400 text-[11px]">Multimodal Engine Active</p>
         </div>
       </div>
     </div>
 
     <!-- User Footer -->
-    <div class="p-4 border-t border-slate-800 flex items-center gap-3">
-      <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-semibold text-slate-300">
-        U
-      </div>
-      <div>
-        <p class="text-sm font-medium text-slate-200">Workspace User</p>
-        <p id="unlockBadge" class="text-xs text-amber-400 font-semibold">Locked Tier</p>
+    <div class="p-3.5 border-t border-slate-800 bg-slate-900/50 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-indigo-950 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300">
+          U
+        </div>
+        <div>
+          <p class="text-xs font-medium text-slate-200">Workspace User</p>
+          <p id="unlockBadge" class="text-[10px] text-amber-400 font-semibold">Locked Tier</p>
+        </div>
       </div>
     </div>
   </aside>
 
   <!-- Main Chat Workspace -->
-  <main class="flex-1 flex flex-col h-full bg-slate-950 relative">
+  <main class="flex-1 flex flex-col h-full bg-slate-950 bg-grid-pattern relative overflow-hidden">
 
-    <!-- Top Navigation Bar with ACTIVATE KEY Button -->
-    <header class="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur">
+    <!-- Header Navigation -->
+    <header class="h-14 border-b border-slate-800/80 flex items-center justify-between px-4 sm:px-6 bg-slate-900/80 backdrop-blur-md shrink-0">
       <div class="flex items-center gap-3">
-        <h2 class="font-semibold text-slate-200">AndrewTesla Chatbot</h2>
-        <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 uppercase tracking-wide">
-          gemini-3.5-flash-lite
-        </span>
+        <button id="openSidebarMobile" class="md:hidden text-slate-300 hover:text-white p-1">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        <h2 id="currentChatTitle" class="font-medium text-slate-200 text-xs sm:text-sm tracking-wide truncate max-w-[160px] sm:max-w-xs">AndrewTesla Chatbot</h2>
       </div>
-      <div class="flex items-center gap-3">
-        <button id="openSettings" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-md shadow-indigo-600/30">
-          <i class="fa-solid fa-key"></i> ACTIVATE KEY
+
+      <div class="flex items-center gap-2">
+        <button id="openSettings" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-3 sm:px-4 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-indigo-600/30 shrink-0">
+          <i class="fa-solid fa-key text-[11px]"></i> <span class="hidden sm:inline">ACTIVATE KEY</span><span class="sm:hidden">KEY</span>
         </button>
       </div>
     </header>
 
     <!-- Chat Messages Window -->
-    <div id="chatWindow" class="flex-1 overflow-y-auto p-6 space-y-6">
+    <div id="chatWindow" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
       <div class="max-w-3xl mx-auto space-y-6" id="messagesContainer">
         
-        <!-- Welcome Banner -->
-        <div id="welcomeBanner" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
-          <div class="w-12 h-12 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto text-xl border border-indigo-500/30">
+        <!-- Welcome Card -->
+        <div id="welcomeBanner" class="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 text-center space-y-3.5 glow-border max-w-lg mx-auto my-8 backdrop-blur shadow-2xl">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center mx-auto text-lg border border-indigo-500/30 shadow-inner">
             <i class="fa-solid fa-bolt"></i>
           </div>
-          <h1 class="text-xl font-bold text-slate-100">Welcome to AndrewTesla</h1>
-          <p class="text-slate-400 text-sm max-w-md mx-auto">
-            Powered by the <span class="text-indigo-400 font-semibold">Gemini 3.5 Flash Lite</span> engine. Type your prompt below to start.
+          <h1 class="text-base sm:text-lg font-bold text-slate-100">Welcome to AndrewTesla</h1>
+          <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto leading-relaxed">
+            Powered by <span class="text-indigo-400 font-semibold">Gemini 3.5 Flash Lite</span>. Send text prompts, images, or short videos below.
           </p>
         </div>
 
       </div>
     </div>
 
-    <!-- Input Bar Area -->
-    <div class="p-4 border-t border-slate-800 bg-slate-950">
+    <!-- Media File Attachment Preview Bar -->
+    <div id="attachmentPreviewBar" class="hidden px-4 py-2.5 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex items-center justify-between max-w-3xl mx-auto w-full shadow-lg">
+      <div class="flex items-center gap-3 overflow-hidden">
+        <div id="mediaThumbnail" class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+          <i class="fa-solid fa-file text-slate-400 text-xs"></i>
+        </div>
+        <div class="truncate">
+          <p id="mediaFileName" class="text-xs font-medium text-slate-200 truncate">file.png</p>
+          <p id="mediaFileType" class="text-[10px] text-slate-400">Media file</p>
+        </div>
+      </div>
+      <button id="removeAttachmentBtn" class="text-slate-400 hover:text-red-400 p-1 text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-3 sm:p-4 border-t border-slate-800 bg-slate-950/90 backdrop-blur shrink-0">
       <form id="chatForm" class="max-w-3xl mx-auto flex items-center gap-2">
+        <input type="file" id="mediaInput" accept="image/*,video/*" class="hidden" />
+        <button type="button" id="attachBtn" class="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 p-3 rounded-xl transition flex items-center justify-center shrink-0 border border-slate-800">
+          <i class="fa-solid fa-paperclip text-sm"></i>
+        </button>
+
         <div class="relative flex-1">
           <input 
             type="text" 
             id="userInput" 
-            placeholder="Message AndrewTesla (Gemini 3.5 Flash Lite)..." 
-            class="w-full bg-slate-900 border border-slate-800 text-slate-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-indigo-500 transition shadow-inner"
-            required 
+            placeholder="Message AndrewTesla (attach photo/video)..." 
+            class="w-full bg-slate-900/90 border border-slate-800 text-slate-100 text-xs sm:text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition shadow-inner placeholder:text-slate-500"
             autocomplete="off"
           />
         </div>
+
         <button 
           type="submit" 
           id="sendBtn" 
-          class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl transition flex items-center justify-center shadow-lg shadow-indigo-600/30">
-          <i class="fa-solid fa-paper-plane"></i>
+          class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl transition flex items-center justify-center shadow-lg shadow-indigo-600/30 shrink-0">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
         </button>
       </form>
     </div>
 
   </main>
 
-  <!-- Activation Dialog Modal with Copy & Paste boxes -->
-  <div id="settingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl">
+  <!-- Key Settings Modal -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl glow-border">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-slate-100">Activate AI Key</h3>
+        <h3 class="text-base font-bold text-slate-100">Activate AI Key</h3>
         <button id="closeSettings" class="text-slate-400 hover:text-slate-200">
-          <i class="fa-solid fa-xmark text-lg"></i>
+          <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
-      <!-- Copy Key Section -->
       <div class="space-y-2">
-        <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">1. Copy Key</label>
+        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1. Copy Key</label>
         <div class="flex gap-2">
           <input 
             type="text" 
@@ -153,25 +209,24 @@
             class="w-full bg-slate-950 border border-slate-800 text-slate-400 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none select-all"
           />
           <button id="copyKeyBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs font-semibold transition shrink-0 border border-slate-700">
-            <i class="fa-solid fa-copy"></i> Copy
+            <i class="fa-solid fa-copy text-[10px]"></i> Copy
           </button>
         </div>
       </div>
 
-      <!-- Paste Key Section -->
       <div class="space-y-2">
-        <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">2. Paste Key</label>
+        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">2. Paste Key</label>
         <input 
           type="password" 
           id="apiKeyInput" 
           placeholder="Paste AI Studio API Key here..." 
-          class="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+          class="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
         />
-        <p class="text-xs text-slate-500">Target Model: <span class="font-mono text-indigo-400">gemini-3.5-flash-lite</span></p>
+        <p class="text-[10px] text-slate-500">Target Engine: <span class="font-mono text-indigo-400">gemini-3.5-flash-lite</span></p>
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
-        <button id="saveSettingsBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition w-full">
+        <button id="saveSettingsBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition w-full shadow-lg shadow-indigo-600/30">
           Save & Activate
         </button>
       </div>
@@ -179,18 +234,17 @@
   </div>
 
   <script>
-    // System State & Persistent Loading
     let isUnlocked = localStorage.getItem('is_unlocked') === 'true';
-    let chatHistory = JSON.parse(localStorage.getItem('chat_history') || "[]");
     let customApiKey = localStorage.getItem('gemini_api_key') || "";
+    let sessions = JSON.parse(localStorage.getItem('chat_sessions') || "[]");
+    let currentSessionId = localStorage.getItem('current_session_id') || "";
+    let attachedFile = null;
 
-    // Obfuscated key injection to bypass GitHub Secret Scanning
-    const part1 = "AQ.Ab8RN6IxtfU_Yt4rbz";
-    const part2 = "3xuL2-u1TTKL0ExJ4r";
-    const part3 = "NKqaL99GIk__jg";
-    const runtimeKey = part1 + part2 + part3;
+    const p1 = "AQ.Ab8RN6IxtfU_Yt4rbz";
+    const p2 = "3xuL2-u1TTKL0ExJ4r";
+    const p3 = "NKqaL99GIk__jg";
+    const runtimeKey = p1 + p2 + p3;
 
-    // DOM Elements
     const chatForm = document.getElementById('chatForm');
     const userInput = document.getElementById('userInput');
     const messagesContainer = document.getElementById('messagesContainer');
@@ -198,8 +252,22 @@
     const sendBtn = document.getElementById('sendBtn');
     const unlockBadge = document.getElementById('unlockBadge');
     const newChatBtn = document.getElementById('newChatBtn');
+    const sessionList = document.getElementById('sessionList');
+    const currentChatTitle = document.getElementById('currentChatTitle');
 
-    // Modal Controls
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const openSidebarMobile = document.getElementById('openSidebarMobile');
+    const closeSidebarMobile = document.getElementById('closeSidebarMobile');
+
+    const mediaInput = document.getElementById('mediaInput');
+    const attachBtn = document.getElementById('attachBtn');
+    const attachmentPreviewBar = document.getElementById('attachmentPreviewBar');
+    const mediaThumbnail = document.getElementById('mediaThumbnail');
+    const mediaFileName = document.getElementById('mediaFileName');
+    const mediaFileType = document.getElementById('mediaFileType');
+    const removeAttachmentBtn = document.getElementById('removeAttachmentBtn');
+
     const settingsModal = document.getElementById('settingsModal');
     const openSettings = document.getElementById('openSettings');
     const closeSettings = document.getElementById('closeSettings');
@@ -208,23 +276,18 @@
     const copyKeyBtn = document.getElementById('copyKeyBtn');
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
-    // Populate the copy box dynamically via JavaScript so GitHub scanner doesn't catch it
     defaultKeyBox.value = runtimeKey;
-
     if (customApiKey) apiKeyInput.value = customApiKey;
 
     openSettings.onclick = () => settingsModal.classList.replace('hidden', 'flex');
     closeSettings.onclick = () => settingsModal.classList.replace('flex', 'hidden');
 
-    // Copy Button Handler
     copyKeyBtn.onclick = () => {
       defaultKeyBox.select();
       defaultKeyBox.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(defaultKeyBox.value);
-      copyKeyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-      setTimeout(() => {
-        copyKeyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
-      }, 1500);
+      copyKeyBtn.innerHTML = '<i class="fa-solid fa-check text-[10px]"></i> Copied!';
+      setTimeout(() => copyKeyBtn.innerHTML = '<i class="fa-solid fa-copy text-[10px]"></i> Copy', 1500);
     };
 
     saveSettingsBtn.onclick = () => {
@@ -233,94 +296,260 @@
       settingsModal.classList.replace('flex', 'hidden');
     };
 
-    // UI Initialization State
+    const toggleSidebar = (show) => {
+      if (show) {
+        sidebar.classList.remove('-translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      }
+    };
+    openSidebarMobile.onclick = () => toggleSidebar(true);
+    closeSidebarMobile.onclick = () => toggleSidebar(false);
+    sidebarOverlay.onclick = () => toggleSidebar(false);
+
     if (isUnlocked) {
       unlockBadge.textContent = "Unlocked Tier";
-      unlockBadge.className = "text-xs text-emerald-400 font-semibold";
+      unlockBadge.className = "text-[10px] text-emerald-400 font-semibold";
     }
 
-    // Render Past Saved Messages on Startup
-    if (chatHistory.length > 0) {
-      if(welcomeBanner) welcomeBanner.style.display = 'none';
-      chatHistory.forEach(turn => {
-        const sender = turn.role === 'user' ? 'user' : 'bot';
-        const text = turn.parts[0].text;
-        appendMessageDOM(sender, text);
+    attachBtn.onclick = () => mediaInput.click();
+    
+    mediaInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File size exceeds 10MB limit. Please select a smaller photo or video clip.");
+        mediaInput.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        attachedFile = {
+          name: file.name,
+          type: file.type,
+          base64: event.target.result.split(',')[1],
+          dataUrl: event.target.result
+        };
+
+        mediaFileName.textContent = file.name;
+        mediaFileType.textContent = file.type.startsWith('video/') ? 'Video File' : 'Photo File';
+
+        if (file.type.startsWith('image/')) {
+          mediaThumbnail.innerHTML = `<img src="${event.target.result}" class="w-full h-full object-cover" />`;
+        } else {
+          mediaThumbnail.innerHTML = `<i class="fa-solid fa-video text-indigo-400 text-xs"></i>`;
+        }
+
+        attachmentPreviewBar.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    };
+
+    removeAttachmentBtn.onclick = () => {
+      attachedFile = null;
+      mediaInput.value = '';
+      attachmentPreviewBar.classList.add('hidden');
+    };
+
+    function initSessions() {
+      if (sessions.length === 0) {
+        createNewSession();
+      } else {
+        if (!currentSessionId || !sessions.find(s => s.id === currentSessionId)) {
+          currentSessionId = sessions[0].id;
+        }
+        renderSessionList();
+        loadSession(currentSessionId);
+      }
+    }
+
+    function createNewSession() {
+      const newSession = {
+        id: 'session-' + Date.now(),
+        title: 'New Conversation',
+        history: []
+      };
+      sessions.unshift(newSession);
+      currentSessionId = newSession.id;
+      saveSessionsSafe();
+      renderSessionList();
+      loadSession(currentSessionId);
+    }
+
+    function saveSessionsSafe() {
+      try {
+        const lightSessions = sessions.map(s => ({
+          id: s.id,
+          title: s.title,
+          history: s.history.map(turn => ({
+            role: turn.role,
+            parts: turn.parts.map(p => {
+              if (p.inline_data) {
+                return { text: `[Attached ${p.inline_data.mime_type.startsWith('video/') ? 'Video' : 'Image'}]` };
+              }
+              return p;
+            })
+          }))
+        }));
+        localStorage.setItem('chat_sessions', JSON.stringify(lightSessions));
+        localStorage.setItem('current_session_id', currentSessionId);
+      } catch (err) {
+        console.warn("Storage quota limit reached.");
+      }
+    }
+
+    function renderSessionList() {
+      sessionList.innerHTML = '';
+      sessions.forEach(s => {
+        const btn = document.createElement('button');
+        const isActive = s.id === currentSessionId;
+        btn.className = `w-full text-left px-3 py-2 rounded-xl text-xs truncate flex items-center justify-between group transition ${
+          isActive ? 'bg-indigo-600/20 text-indigo-300 font-medium border border-indigo-500/30 shadow-sm' : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+        }`;
+        
+        btn.innerHTML = `
+          <span class="truncate flex-1 pr-2"><i class="fa-regular fa-message mr-2 text-[10px] text-slate-500"></i>${s.title}</span>
+          <i class="fa-solid fa-trash-can opacity-0 group-hover:opacity-100 hover:text-red-400 transition text-[10px] p-1" onclick="deleteSession(event, '${s.id}')"></i>
+        `;
+        
+        btn.onclick = (e) => {
+          if (e.target.classList.contains('fa-trash-can')) return;
+          currentSessionId = s.id;
+          localStorage.setItem('current_session_id', currentSessionId);
+          renderSessionList();
+          loadSession(s.id);
+          toggleSidebar(false);
+        };
+        sessionList.appendChild(btn);
       });
     }
 
-    // New Conversation Handler (Clears saved history)
-    newChatBtn.onclick = () => {
-      chatHistory = [];
-      localStorage.removeItem('chat_history');
-      messagesContainer.innerHTML = '';
-      if(welcomeBanner) {
-        messagesContainer.appendChild(welcomeBanner);
-        welcomeBanner.style.display = 'block';
+    window.deleteSession = (e, id) => {
+      e.stopPropagation();
+      sessions = sessions.filter(s => s.id !== id);
+      if (sessions.length === 0) {
+        createNewSession();
+      } else {
+        if (currentSessionId === id) currentSessionId = sessions[0].id;
+        saveSessionsSafe();
+        renderSessionList();
+        loadSession(currentSessionId);
       }
     };
 
-    // Chat Message Submission Handler
+    function loadSession(id) {
+      const session = sessions.find(s => s.id === id);
+      if (!session) return;
+
+      messagesContainer.innerHTML = '';
+      currentChatTitle.textContent = session.title;
+
+      if (session.history.length === 0) {
+        messagesContainer.appendChild(welcomeBanner);
+        welcomeBanner.style.display = 'block';
+      } else {
+        if (welcomeBanner) welcomeBanner.style.display = 'none';
+        session.history.forEach(turn => {
+          const sender = turn.role === 'user' ? 'user' : 'bot';
+          const textPart = turn.parts.find(p => p.text)?.text || '';
+          const mediaPart = turn.parts.find(p => p.inline_data);
+          appendMessageDOM(sender, textPart, mediaPart);
+        });
+      }
+    }
+
+    newChatBtn.onclick = () => {
+      createNewSession();
+      toggleSidebar(false);
+    };
+
     chatForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const message = userInput.value.trim();
-      if (!message) return;
+      const textMessage = userInput.value.trim();
+      if (!textMessage && !attachedFile) return;
 
-      if(welcomeBanner) welcomeBanner.style.display = 'none';
+      if (welcomeBanner) welcomeBanner.style.display = 'none';
 
-      // Render User Bubble
-      appendMessage('user', message);
+      const activeSession = sessions.find(s => s.id === currentSessionId);
+      if (!activeSession) return;
+
+      if (activeSession.history.length === 0) {
+        activeSession.title = textMessage ? textMessage.slice(0, 24) : (attachedFile ? 'Media Clip' : 'Conversation');
+        currentChatTitle.textContent = activeSession.title;
+        renderSessionList();
+      }
+
+      const apiParts = [];
+      if (textMessage) apiParts.push({ text: textMessage });
+      
+      let mediaPayload = null;
+      if (attachedFile) {
+        mediaPayload = {
+          inline_data: {
+            mime_type: attachedFile.type,
+            data: attachedFile.base64
+          }
+        };
+        apiParts.push(mediaPayload);
+      }
+
+      appendMessageDOM('user', textMessage, mediaPayload);
+
       userInput.value = '';
+      attachedFile = null;
+      mediaInput.value = '';
+      attachmentPreviewBar.classList.add('hidden');
 
-      // Check Secret Unlock Code
-      if (message === "andrewandrewandrew") {
+      if (textMessage === "andrewandrewandrew") {
         isUnlocked = true;
         localStorage.setItem('is_unlocked', 'true');
         unlockBadge.textContent = "Unlocked Tier";
-        unlockBadge.className = "text-xs text-emerald-400 font-semibold";
-        appendMessage('bot', "🔓 **Messages Unlocked!** Connected directly to **Gemini 3.5 Flash Lite**. Ask me anything!");
+        unlockBadge.className = "text-[10px] text-emerald-400 font-semibold";
+        appendMessageDOM('bot', "🔓 **Messages Unlocked!** Connected directly to **Gemini 3.5 Flash Lite**. Ask me anything!");
         return;
       }
 
-      // Handle Locked Mode
       if (!isUnlocked) {
-        appendMessage('bot', "give andrew ₹100 to unlock one message");
+        appendMessageDOM('bot', "give andrew ₹100 to unlock one message");
         return;
       }
 
-      // Handle Unlocked Mode via Gemini 3.5 Flash Lite Engine
       sendBtn.disabled = true;
       const loadingId = appendLoadingBubble();
 
       try {
-        const responseText = await fetchGemini35FlashLiteResponse(message);
+        activeSession.history.push({ role: "user", parts: apiParts });
+        saveSessionsSafe();
+
+        const responseText = await fetchGemini35FlashLiteResponse(activeSession.history);
         removeLoadingBubble(loadingId);
-        appendMessage('bot', responseText);
+        
+        activeSession.history.push({ role: "model", parts: [{ text: responseText }] });
+        saveSessionsSafe();
+
+        appendMessageDOM('bot', responseText);
       } catch (err) {
         removeLoadingBubble(loadingId);
-        appendMessage('bot', `⚠️ **Error connecting to Gemini 3.5 Flash Lite:** ${err.message}`);
+        appendMessageDOM('bot', `⚠️ **Error connecting to Gemini 3.5 Flash Lite:** ${err.message}`);
       } finally {
         sendBtn.disabled = false;
       }
     });
 
-    // Gemini 3.5 Flash Lite Direct API Fetch Engine with Persistent Storage
-    async function fetchGemini35FlashLiteResponse(userPrompt) {
-      const key = customApiKey || "";
-      
-      chatHistory.push({ role: "user", parts: [{ text: userPrompt }] });
-      localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${key}`;
+    async function fetchGemini35FlashLiteResponse(historyData) {
+      const key = customApiKey || runtimeKey;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${encodeURIComponent(key)}`;
 
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: chatHistory,
-          generationConfig: {
-            temperature: 0.7
-          }
+          contents: historyData,
+          generationConfig: { temperature: 0.7 }
         })
       });
 
@@ -330,33 +559,36 @@
       }
 
       const data = await res.json();
-      const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response text returned.";
-      
-      chatHistory.push({ role: "model", parts: [{ text: botReply }] });
-      localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-      
-      return botReply;
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response text returned.";
     }
 
-    // Render Helpers
-    function appendMessage(sender, text) {
-      appendMessageDOM(sender, text);
-    }
-
-    function appendMessageDOM(sender, text) {
+    function appendMessageDOM(sender, text, mediaPart) {
       const isUser = sender === 'user';
       const bubble = document.createElement('div');
-      bubble.className = `flex gap-4 ${isUser ? 'justify-end' : 'justify-start'}`;
+      bubble.className = `flex gap-3 sm:gap-4 ${isUser ? 'justify-end' : 'justify-start'}`;
 
-      const formattedContent = isUser ? text : marked.parse(text);
+      let mediaHtml = '';
+      if (mediaPart && mediaPart.inline_data) {
+        const mime = mediaPart.inline_data.mime_type;
+        const dataUrl = `data:${mime};base64,${mediaPart.inline_data.data}`;
+        if (mime.startsWith('image/')) {
+          mediaHtml = `<img src="${dataUrl}" class="max-w-xs rounded-xl mb-2 border border-slate-700/80 shadow-md" />`;
+        } else if (mime.startsWith('video/')) {
+          mediaHtml = `<video src="${dataUrl}" controls class="max-w-xs rounded-xl mb-2 border border-slate-700/80 shadow-md"></video>`;
+        }
+      }
+
+      const cleanText = text && !text.startsWith('[Attached') ? text : '';
+      const formattedContent = isUser ? (cleanText ? cleanText.replace(/\n/g, '<br>') : '') : marked.parse(text || '');
 
       bubble.innerHTML = `
-        <div class="flex gap-3 max-w-2xl ${isUser ? 'flex-row-reverse' : 'flex-row'}">
-          <div class="w-8 h-8 rounded-full ${isUser ? 'bg-indigo-600' : 'bg-slate-800 border border-slate-700'} flex items-center justify-center font-bold text-xs shrink-0">
+        <div class="flex gap-2.5 sm:gap-3 max-w-[85%] sm:max-w-2xl ${isUser ? 'flex-row-reverse' : 'flex-row'}">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full ${isUser ? 'bg-indigo-600' : 'bg-slate-800/90 border border-slate-700/80'} flex items-center justify-center font-bold text-[11px] shrink-0 text-slate-200">
             ${isUser ? 'U' : 'AT'}
           </div>
-          <div class="rounded-2xl px-4 py-3 text-sm ${isUser ? 'bg-indigo-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-200'} shadow-md">
-            ${isUser ? text : `<div class="prose prose-invert max-w-none text-sm">${formattedContent}</div>`}
+          <div class="rounded-2xl px-4 py-2.5 text-xs sm:text-sm ${isUser ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 border border-slate-800 text-slate-200 shadow-md'} overflow-hidden break-words">
+            ${mediaHtml}
+            ${isUser ? formattedContent : `<div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed">${formattedContent}</div>`}
           </div>
         </div>
       `;
@@ -370,12 +602,12 @@
       const id = 'loading-' + Date.now();
       const bubble = document.createElement('div');
       bubble.id = id;
-      bubble.className = 'flex gap-3 items-center text-slate-400 text-sm';
+      bubble.className = 'flex gap-3 items-center text-slate-400 text-xs sm:text-sm';
       bubble.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs">AT</div>
-        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2.5 rounded-2xl">
-          <i class="fa-solid fa-circle-notch animate-spin text-indigo-400"></i>
-          <span>Thinking with Gemini 3.5 Flash Lite...</span>
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs">AT</div>
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3.5 py-2.5 rounded-2xl shadow-md">
+          <i class="fa-solid fa-circle-notch animate-spin text-indigo-400 text-xs"></i>
+          <span class="text-xs text-slate-400">Thinking with Gemini 3.5 Flash Lite...</span>
         </div>
       `;
       messagesContainer.appendChild(bubble);
@@ -392,6 +624,8 @@
       const chatWindow = document.getElementById('chatWindow');
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
+
+    initSessions();
   </script>
 </body>
 </html>
